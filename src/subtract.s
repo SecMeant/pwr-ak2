@@ -30,10 +30,10 @@ BUFFER_SIZE = 40 * 1
 		.8byte 0x8
 	
 .text
-.global _start
+.global crypt_main
 .global substract
 
-_start:
+crypt_main:
 	
 	movq $BIGNUM_CHUNK, %rax
 	movq $big_value_1, %rbx
