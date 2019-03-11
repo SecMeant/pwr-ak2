@@ -7,8 +7,8 @@ SRCDIR=./src
 OBJDIR=./obj
 C_SOURCES = ${shell find -type f -path './src/*.c' -printf "%f\n"}
 ASM_SOURCES = ${shell find -type f -path './src/*.s' -printf "%f\n"}
-C_OBJECTS = ${OBJDIR}/${C_SOURCES:.c=.o}
-ASM_OBJECTS = ${OBJDIR}/${ASM_SOURCES:.s=.o}
+C_OBJECTS = ${C_SOURCES:%.c=${OBJDIR}/%.o}
+ASM_OBJECTS = ${ASM_SOURCES:%.s=${OBJDIR}/%.o}
 OBJECTS = ${C_OBJECTS}
 OBJECTS += ${ASM_OBJECTS}
 TARGET = crypt
@@ -16,7 +16,8 @@ TARGET = crypt
 all: ${TARGET}
 
 clean:
-	rm -rf ${OBJECT_FILES}
+	rm -f ${OBJECTS}
+	rm -f crypt
 
 ${OBJDIR}/%.o : ${SRCDIR}/%.s
 	${AS} ${ASFLAGS} -c $< -o $@
