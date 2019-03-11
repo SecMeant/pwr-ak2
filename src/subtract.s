@@ -30,14 +30,14 @@ BUFFER_SIZE = 40 * 1
 		.8byte 0x8
 	
 .text
-.global crypt_main
+.global subtract_main
 .global substract
 
-crypt_main:
+subtract_main:
 	
-	movq $BIGNUM_CHUNK, %rax
-	movq $big_value_1, %rbx
-	movq $big_value_2, %rcx
+	leaq BIGNUM_CHUNK(%rip), %rax
+	leaq big_value_1(%rip), %rbx
+	leaq big_value_2(%rip), %rcx
 	call substract
 	pop %rax
 	movq %rbp, %rsp
