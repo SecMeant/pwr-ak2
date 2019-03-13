@@ -35,8 +35,8 @@ big_value_2: # 7 lines * 64bit argument = 448bit
 multiply_test:
 
 	movq $BIGNUM_CHUNK, %r8
-	movq big_value_1(%rip), %r9
-	movq big_value_2(%rip), %r10
+	lea big_value_1(%rip), %r9
+	lea big_value_2(%rip), %r10
 	call bignum_multiply
 	pop %rax
 	movq %rbp, %rsp
