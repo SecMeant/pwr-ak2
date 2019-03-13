@@ -1,3 +1,5 @@
+.extern malloc
+
 # define some variables
 BIGNUM_CHUNK = 7 # amount of bignum chunks
 CHUNK_SIZE = 8
@@ -9,34 +11,33 @@ SYS_EXIT = 60
 
 # buffer size
 BUFFER_SIZE = 40 * 1
-.data
-	big_value_1: # 7 lines * 64bit argument = 448bit 
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-	big_value_2: # 7 lines * 64bit argument = 448bit
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-		.8byte 0x2
-	
 .text
-.global _start
-.global multiply
+big_value_1: # 7 lines * 64bit argument = 448bit 
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+big_value_2: # 7 lines * 64bit argument = 448bit
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+  .8byte 0x2
+	
+.global multiply_test
+.global bignum_multiply
 
-_start:
+multiply_test:
 
 	movq $BIGNUM_CHUNK, %r8
-	movq $big_value_1, %r9
-	movq $big_value_2, %r10
-	call multiply
+	movq big_value_1(%rip), %r9
+	movq big_value_2(%rip), %r10
+	call bignum_multiply
 	pop %rax
 	movq %rbp, %rsp
 	movq $SYS_EXIT, %rax
@@ -59,7 +60,7 @@ _start:
 #      ...
 # +
 # ------------
-multiply:
+bignum_multiply:
 	push %rbp
 	movq %rsp, %rbp
 	# allocate memory on stack
@@ -96,19 +97,19 @@ multiply:
   	decq %rdi # decreament to obtain offset
   	movq (%r9,%rdi,CHUNK_SIZE), %rbx
   	cmpq %rax, %rbx
-  	jb check_next_number
+  	jb bignum_multiply_check_next_number
   	# set flag for first number
   	orq $FIRST_VALUE_SIGN_MASK, 16(%rsp)
 
-check_next_number: 
+bignum_multiply_check_next_number: 
 
   	movq (%r10, %rdi, CHUNK_SIZE), %rbx
   	cmpq %rax, %rbx
-  	jb continue_multiplication
+  	jb bignum_multiply_continue_multiplication
   	# set flag for second number
   	orq $SECOND_VALUE_SIGN_MASK, 16(%rsp)	
 
-continue_multiplication:
+bignum_multiply_continue_multiplication:
 	
 	# u64 i = 0
  	movq $0, %r12 
@@ -123,12 +124,12 @@ continue_multiplication:
   	# get result pointer
 	movq 8(%rsp), %rcx
 
-	loop_outer:
+	bignum_multiply_loop_outer:
 		# int64 second_big_val = *(bignum_second + off)
 		movq (%r10, %r12, CHUNK_SIZE), %rbx 
 		# u64 result_index = i
 		movq %r12, %r14
-		loop_inner:
+		bignum_multiply_loop_inner:
 		    
 			# int64 first_big_val = *(bignum_first + off)
 			movq (%r9, %r13, CHUNK_SIZE), %rax
@@ -148,7 +149,7 @@ continue_multiplication:
 			incq %r14 
 			# while( j < bignum_size-1 )
 			cmpq %r13, %r8
-			ja loop_inner
+			ja bignum_multiply_loop_inner
 		# last data chunk multiplication requires special treatment
 		# since it can be negative
 		# more on Dr.Tomczak sildes mnozenie.pdf str 18
@@ -163,20 +164,20 @@ continue_multiplication:
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $FIRST_VALUE_SIGN_MASK, 16(%rsp)
-		jns postive_number
+		jns bignum_multiply_positive_number
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)  
 		sbb $0,  16(%rcx, %r14, CHUNK_SIZE)
 
-		postive_number:  
+		bignum_multiply_positive_number:  
 		#j =0
 		movq $0, %r13
 		# i++
 		incq %r12 
 		# while( i < bignum_size-1 )
 		cmpq %r12, %r8
-		ja loop_outer
+		ja bignum_multiply_loop_outer
 	
 	# in this moment
 	# i = bignum_size - 1
@@ -187,7 +188,7 @@ continue_multiplication:
 	movq %r12, %r14
 	
 	# multiply it with first bignum
-	loop_last_arg:
+	bignum_multiply_loop_last_arg:
 
 		movq (%r9, %r13, CHUNK_SIZE), %rax
 		mul %rbx
@@ -199,20 +200,20 @@ continue_multiplication:
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $SECOND_VALUE_SIGN_MASK, 16(%rsp)
-		jns postive_number_2
+		jns bignum_multiply_positive_number_2
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)  
 		sbb $0,  16(%rcx, %r14, CHUNK_SIZE)
 
-		postive_number_2:  
+		bignum_multiply_positive_number_2:  
 		# calculate result index
 		incq %r14
 		# j++
 		incq %r13
 		# while( i < bignum_size-1 )
 		cmpq %r13, %r8
-		ja loop_last_arg
+		ja bignum_multiply_loop_last_arg
 
 	
 	# get last data chunk from first bignum 
@@ -237,10 +238,10 @@ continue_multiplication:
 	movq 8(%rsp), %rdx
 	# init loop counter
 	movq %rax, %rcx
-	test_loop:
+	bignum_multiply_test_loop:
 		movq (%rdx, %r14, CHUNK_SIZE), %rbx
 		incq %r14
-		loop test_loop
+		loop bignum_multiply_test_loop
 
 	# restore stack
 	movq %rbp, %rsp
@@ -267,3 +268,4 @@ zero_memory:
 
 	addq $8, %rsp	
 	ret
+
