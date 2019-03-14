@@ -46,9 +46,11 @@ multiply_test:
 
 # first bignum argument multiply with second bignum argument
 # return pointer to allocated memory
-# r8 should contain information about size of operands 
-# r9 contains pointer to first bignum argument
-# r10 constains pointer to second bignum argument
+# rdi -> R9   contains pointer to first bignum argument
+# rsi -> R8   contains information about size of first bignum
+# rdx -> R10  contains pointer to second bignum argument
+# rcx -> R8   contains information about size of second bignum
+
 #   	A B C
 # x 	D E F
 # ------------
@@ -63,12 +65,26 @@ multiply_test:
 bignum_multiply:
 	push %rbp
 	movq %rsp, %rbp
+	# save some registers
+	push %rbx
+	push %r12
+	push %r13
+	push %r14
+	push %r15
+
+	# get bigger value of operands
+	cmpq %rsi, %rcx
+	movq %rcx,%r8
+	jge bignum_multiply_bigest_found
+	movq %rsi,%r8
+
+bignum_multiply_bigest_found:
 	# allocate memory on stack
 	subq $32, %rsp
 	# save registrs
 	movq %r8, 16(%rsp)
-	movq %r9, 24(%rsp)
-	movq %r10, 32(%rsp)
+	movq %rdi, 24(%rsp)
+	movq %rdx, 32(%rsp)
 	# calculate proper size for multiplication result 
 	movq %r8, %rax
 	# $16 = $2*$8 , result will be twice as big as argument, also convert value to word size   
@@ -136,10 +152,10 @@ bignum_multiply_continue_multiplication:
 			mul %rbx
 			
 			# save result in memory
-			add %rax,   (%rcx, %r14, CHUNK_SIZE)
-			adc %rdx,  8(%rcx, %r14, CHUNK_SIZE)
+			addq %rax,   (%rcx, %r14, CHUNK_SIZE)
+			adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 			# save carry after last addition
-			adc $0,   16(%rcx, %r14, CHUNK_SIZE)
+			adcq $0,   16(%rcx, %r14, CHUNK_SIZE)
 			##### JUST FOR TEST
 			movq (%rcx, %r14, CHUNK_SIZE), %r15
 			######### 
@@ -157,10 +173,10 @@ bignum_multiply_continue_multiplication:
 		movq (%r9, %r13, CHUNK_SIZE), %rax
 		mul %rbx
 		# save result in memory
-		add %rax,    (%rcx, %r14, CHUNK_SIZE)
-		adc %rdx,   8(%rcx, %r14, CHUNK_SIZE)
+		addq %rax,    (%rcx, %r14, CHUNK_SIZE)
+		adcq %rdx,   8(%rcx, %r14, CHUNK_SIZE)
 		# save carry after last addition
-		adc $0,   16(%rcx, %r14, CHUNK_SIZE)		
+		adcq $0,   16(%rcx, %r14, CHUNK_SIZE)		
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $FIRST_VALUE_SIGN_MASK, 16(%rsp)
@@ -168,7 +184,7 @@ bignum_multiply_continue_multiplication:
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)  
-		sbb $0,  16(%rcx, %r14, CHUNK_SIZE)
+		sbbq $0,  16(%rcx, %r14, CHUNK_SIZE)
 
 		bignum_multiply_positive_number:  
 		#j =0
@@ -193,10 +209,10 @@ bignum_multiply_continue_multiplication:
 		movq (%r9, %r13, CHUNK_SIZE), %rax
 		mul %rbx
 		# save result in memory
-		add %rax,   (%rcx, %r14, CHUNK_SIZE)
-		adc %rdx,  8(%rcx, %r14, CHUNK_SIZE)
+		addq %rax,   (%rcx, %r14, CHUNK_SIZE)
+		adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 		# save carry after last addition
-		adc $0,   16(%rcx, %r14, CHUNK_SIZE)		
+		adcq $0,   16(%rcx, %r14, CHUNK_SIZE)		
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $SECOND_VALUE_SIGN_MASK, 16(%rsp)
@@ -204,7 +220,7 @@ bignum_multiply_continue_multiplication:
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)  
-		sbb $0,  16(%rcx, %r14, CHUNK_SIZE)
+		sbbq $0,  16(%rcx, %r14, CHUNK_SIZE)
 
 		bignum_multiply_positive_number_2:  
 		# calculate result index
@@ -225,7 +241,7 @@ bignum_multiply_continue_multiplication:
 	
 	# save result in memory
 	add %rax,   (%rcx, %r14, CHUNK_SIZE)
-	adc %rdx,  8(%rcx, %r14, CHUNK_SIZE)
+	adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 
 
 	# only for test
@@ -242,8 +258,15 @@ bignum_multiply_continue_multiplication:
 		movq (%rdx, %r14, CHUNK_SIZE), %rbx
 		incq %r14
 		loop bignum_multiply_test_loop
-
+	# prepare result for return 
+	movq 8(%rsp), %rax
+	movq %r8, %rdx
 	# restore stack
+	pop %r15
+	pop %r14
+	pop %r13
+	pop %r12
+	pop %rbx
 	movq %rbp, %rsp
 	pop %rbp
 	ret
