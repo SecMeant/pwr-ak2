@@ -77,6 +77,6 @@ add_bignum_fast:
 
 		incq %rbx
 		decq %rdx
-		jnz add_bignum_addloop
+		jnz add_bignum_fast_addloop
 	
 	ret
