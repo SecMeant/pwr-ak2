@@ -1,51 +1,6 @@
-# define some variables
-BIGNUM_CHUNK = 7 # amount of bignum chunks
 WORD_SIZE = 8
-# syscall requests
-SYS_READ = 0
-SYS_WRITE = 1
-SYS_EXIT = 60
-# standrad I/O streams
-STDIN = 0
-STDOUT = 1
-STDER = 2
-# buffer size
-BUFFER_SIZE = 40 * 1
-
 .text
-.global subtract_test
-.global substract
-
-big_value_1: # 7 lines * 64bit argument = 448 
-  .8byte 0x1
-  .8byte 0x2
-  .8byte 0x3
-  .8byte 0x4
-  .8byte 0x5
-  .8byte 0x6
-  .8byte 0x7
-big_value_2: # 7 lines * 64bit argument = 448
-  .8byte 0x0
-  .8byte 0x2
-  .8byte 0x3
-  .8byte 0x4
-  .8byte 0x5
-  .8byte 0x6
-  .8byte 0x8
-
-subtract_test:
-	
-	movq $BIGNUM_CHUNK, %rsi
-  movq $BIGNUM_CHUNK, %rcx
-	leaq big_value_1(%rip), %rdi
-	leaq big_value_2(%rip), %rdx
-
-	call bignum_subtract
-	pop %rax
-	movq %rbp, %rsp
-	movq $SYS_EXIT, %rax
-	xor %rdi, %rdi
-	syscall
+.global bignum_subtract
 
 # from first bignum argument subtract second bignum argument
 # rdi    contains pointer to first bignum argument
