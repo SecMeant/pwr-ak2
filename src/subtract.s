@@ -35,9 +35,11 @@ big_value_2: # 7 lines * 64bit argument = 448
 
 subtract_test:
 	
-	leaq BIGNUM_CHUNK(%rip), %rax
-	leaq big_value_1(%rip), %rbx
-	leaq big_value_2(%rip), %rcx
+	movq $BIGNUM_CHUNK, %rsi
+  movq $BIGNUM_CHUNK, %rcx
+	leaq big_value_1(%rip), %rdi
+	leaq big_value_2(%rip), %rdx
+
 	call bignum_subtract
 	pop %rax
 	movq %rbp, %rsp
@@ -46,26 +48,34 @@ subtract_test:
 	syscall
 
 # from first bignum argument subtract second bignum argument
-# rax contains sizeof currently handle bignums
-# rbx contains pointer to first bignum argument
-# rcx constains pointer to second bignum argument
+# rdi    contains pointer to first bignum argument
+# rsi    contains information about size of first bignum
+# rdx    contains pointer to second bignum argument
+# rcx    contains information about size of second bignum
 bignum_subtract:
+  # find smaller number
+  cmpq %rsi, %rcx
+  movq %rcx,%rax
+  jbe bignum_subtract_smallest_found
+  movq %rsi,%rax
+
+bignum_subtract_smallest_found:
 	# clear carry flag
 	clc
 	# set index counter to 0
-	movq $0, %rdx
+	movq $0, %r10
 	# make divison with borrow
 	bignum_subtract_L1:
     # arg1 = *(big_value_1 +off)
-    movq (%rbx,%rdx,WORD_SIZE), %r8
+    movq (%rdi, %r10, WORD_SIZE), %r8
     # arg2 = *(big_value_2 + off)
-    movq (%rcx,%rdx,WORD_SIZE), %r9
+    movq (%rdx, %r10, WORD_SIZE), %r9
     # arg2 = arg2 - arg1
-    sbbq %r8, %r9
+    sbbq %r9, %r8
     # *big_value_2 = arg2 
-    movq %r9, (%rcx,%rdx,WORD_SIZE)
+    movq %r8, (%rdi,%r10,WORD_SIZE)
     # increment index
-    incq %rdx
+    incq %r10
     # decrement  
     decq %rax
     jnz bignum_subtract_L1
