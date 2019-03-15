@@ -58,8 +58,17 @@ void copy_test()
 	printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
 }
 
+void div_test()
+{
+	int64_t num1[2] = {27,0};
+	int64_t num2[2] = {3,0};
+	bignum b1 = {.bignum = num1, .bignum_size = 2};
+	bignum b2 = {.bignum = num2, .bignum_size = 2};
+	bignum_divide(b1,b2);
+}
+
 int main()
 {
-	copy_test();
+	div_test();
 	return 0;
 }
