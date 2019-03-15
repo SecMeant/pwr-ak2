@@ -1,49 +1,7 @@
-.extern malloc
-
-# define some variables
-BIGNUM_CHUNK = 7 # amount of bignum chunks
 CHUNK_SIZE = 8
 INT64_MAX = 0x7FFFFFFFFFFFFFFF
 FIRST_VALUE_SIGN_MASK = 0x1
 SECOND_VALUE_SIGN_MASK = 0x2
-# syscall requests
-SYS_EXIT = 60
-
-# buffer size
-BUFFER_SIZE = 40 * 1
-.text
-big_value_1: # 7 lines * 64bit argument = 448bit 
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-big_value_2: # 7 lines * 64bit argument = 448bit
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-	
-.global multiply_test
-.global bignum_multiply
-
-multiply_test:
-
-	movq $BIGNUM_CHUNK, %r8
-	lea big_value_1(%rip), %r9
-	lea big_value_2(%rip), %r10
-	call bignum_multiply
-	pop %rax
-	movq %rbp, %rsp
-	movq $SYS_EXIT, %rax
-	xor %rdi, %rdi
-	syscall
-
 # first bignum argument multiply with second bignum argument
 # return pointer to allocated memory
 # rdi -> R9   contains pointer to first bignum argument
@@ -62,9 +20,9 @@ multiply_test:
 #      ...
 # +
 # ------------
-
-
-bignum_multiply:
+.global bignum_multiply_fixed
+ 
+bignum_multiply_fixed:
 	push %rbp
 	movq %rsp, %rbp
 	# save some registers
@@ -76,11 +34,11 @@ bignum_multiply:
 
 	# get bigger value of operands
 	cmpq %rsi, %rcx
-	movq %rcx,%r8
-	jge bignum_multiply_bigest_found
+	movq %rcx, %r8
+	jge bignum_multiply_fixed_bigest_found
 	movq %rsi,%r8
 
-bignum_multiply_bigest_found:
+bignum_multiply_fixed_bigest_found:
 	# allocate memory on stack
 	subq $32, %rsp
 	# save registrs
@@ -89,8 +47,8 @@ bignum_multiply_bigest_found:
 	movq %rdx, 32(%rsp)
 	# calculate proper size for multiplication result 
 	movq %r8, %rax
-	# $16 = $2*$8 , result will be twice as big as argument, also convert value to word size   
-	movq $16, %rbx
+	# convert to word size   
+	movq $8, %rbx
 	mulq %rbx
 	# allocate memory for result 
 	movq %rax, %rdi
@@ -110,24 +68,24 @@ bignum_multiply_bigest_found:
 	# if (LSB+1) is set, this means that second number is negative
 	movq $0, 16(%rsp)
 	# check numbers sign
-	movq $INT64_MAX , %rax # bigest posible positve number in U2 
+	movq $INT64_MAX, %rax # bigest posible positve number in U2 
   	movq %r8, %rdi # copy bignum chunk_size
   	decq %rdi # decreament to obtain offset
   	movq (%r9,%rdi,CHUNK_SIZE), %rbx
   	cmpq %rax, %rbx
-  	jb bignum_multiply_check_next_number
+  	jb bignum_multiply_fixed_check_next_number
   	# set flag for first number
   	orq $FIRST_VALUE_SIGN_MASK, 16(%rsp)
 
-bignum_multiply_check_next_number: 
+bignum_multiply_fixed_check_next_number: 
 
   	movq (%r10, %rdi, CHUNK_SIZE), %rbx
   	cmpq %rax, %rbx
-  	jb bignum_multiply_continue_multiplication
+  	jb bignum_multiply_fixed_continue_multiplication
   	# set flag for second number
   	orq $SECOND_VALUE_SIGN_MASK, 16(%rsp)	
 
-bignum_multiply_continue_multiplication:
+bignum_multiply_fixed_continue_multiplication:
 	
 	# u64 i = 0
  	movq $0, %r12 
@@ -143,13 +101,13 @@ bignum_multiply_continue_multiplication:
   	# get result pointer
 	movq 8(%rsp), %rcx
 
-	bignum_multiply_loop_outer:
+	bignum_multiply_fixed_loop_outer:
 		# int64 second_big_val = *(bignum_second + off)
 		movq (%r10, %r12, CHUNK_SIZE), %rbx 
 		# u64 result_index = i
 		movq %r12, %r14
 		
-		bignum_multiply_loop_inner:
+		bignum_multiply_fixed_loop_inner:
 		    
 			# int64 first_big_val = *(bignum_first + off)
 			movq (%r9, %r13, CHUNK_SIZE), %rax
@@ -159,7 +117,7 @@ bignum_multiply_continue_multiplication:
 			addq %rax,   (%rcx, %r14, CHUNK_SIZE)
 			adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 			# if no carry flag set, omit carry propagation
-			jnc bignum_multiply_without_carry
+			jnc bignum_multiply_fixed_without_carry
 			# save flags
 			pushf
 			# prepare registers for carry operation
@@ -173,22 +131,22 @@ bignum_multiply_continue_multiplication:
 			popf
 			# propagte carry after last addition
 			# while( i < BIGNUM_SIZE) 
-			bignum_multiply_propagate_carry:
+			bignum_multiply_fixed_propagate_carry:
 				adcq $0,  16(%rcx, %rdi, CHUNK_SIZE)
 				incq %rdi
 				decq %rsi
-				jnc bignum_multiply_without_carry
-				jg bignum_multiply_propagate_carry
+				jnc bignum_multiply_fixed_without_carry
+				jg bignum_multiply_fixed_propagate_carry
 
-		bignum_multiply_without_carry:
+		bignum_multiply_fixed_without_carry:
 
 			# j++ 
 			incq %r13
 			# calculate result index
-			incq %r14 
+			incq %r14
 			# while( j < bignum_size-1 )
-			cmpq %r13, %r8
-			ja bignum_multiply_loop_inner
+			cmpq %r14, %r8
+			ja bignum_multiply_fixed_loop_inner
 		# last data chunk multiplication requires special treatment
 		# since it can be negative
 		# more on Dr.Tomczak sildes mnozenie.pdf str 18
@@ -200,7 +158,7 @@ bignum_multiply_continue_multiplication:
 		adcq %rdx,   8(%rcx, %r14, CHUNK_SIZE)
 
 		# if no carry flag set, omit carry propagation
-		jnc bignum_multiply_without_carry_2
+		jnc bignum_multiply_fixed_without_carry_2
 		# save flags
 		pushf
 		# prepare registers for carry operation
@@ -214,29 +172,29 @@ bignum_multiply_continue_multiplication:
 		popf
 		# propagate carry after last addition
 		# while( i < BIGNUM_SIZE) 
-		bignum_multiply_propagate_carry_2:
+		bignum_multiply_fixed_propagate_carry_2:
 			adcq $0,   16(%rcx, %rdi, CHUNK_SIZE)
 			incq %rdi
 			decq %rsi
-			jnc bignum_multiply_without_carry_2
-			jg bignum_multiply_propagate_carry_2
+			jnc bignum_multiply_fixed_without_carry_2
+			jg bignum_multiply_fixed_propagate_carry_2
 		
-	bignum_multiply_without_carry_2:
+	bignum_multiply_fixed_without_carry_2:
 		
 		# i++
-		incq %r12 
+		incq %r12
 
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $0x1, 16(%rsp)
 
-		jz bignum_multiply_positive_number
+		jz bignum_multiply_fixed_positive_number
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)
 		
 		# if no carry flag set, omit borrow propagation
-		jnc bignum_multiply_positive_number
+		jnc bignum_multiply_fixed_positive_number
 		# save flags
 		pushf
 		# prepare registers for carry operation
@@ -250,20 +208,20 @@ bignum_multiply_continue_multiplication:
 		popf
 
 		# while( i < BIGNUM_SIZE) 
-		bignum_multiply_propagate_borrow:
+		bignum_multiply_fixed_propagate_borrow:
 			sbbq $0,  16(%rcx, %rdi, CHUNK_SIZE)
 			incq %rdi
 			decq %rsi
-			jnc bignum_multiply_positive_number
-			jg bignum_multiply_propagate_borrow   
+			jnc bignum_multiply_fixed_positive_number
+			jg bignum_multiply_fixed_propagate_borrow   
 		
-		bignum_multiply_positive_number:  
+		bignum_multiply_fixed_positive_number:  
 		#j =0
 		movq $0, %r13
 		
 		# while( i < bignum_size-1 )
 		cmpq %r12, %r8
-		ja bignum_multiply_loop_outer
+		ja bignum_multiply_fixed_loop_outer
 	
 	# in this moment
 	# i = bignum_size - 1
@@ -274,16 +232,15 @@ bignum_multiply_continue_multiplication:
 	movq %r12, %r14
 	
 	# multiply it with first bignum
-	bignum_multiply_loop_last_arg:
+	bignum_multiply_fixed_loop_last_arg:
 		
-
 		movq (%r9, %r13, CHUNK_SIZE), %rax
 		mul %rbx
 		# save result in memory
 		addq %rax,   (%rcx, %r14, CHUNK_SIZE)
 		adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 		# if no carry flag set, omit carry propagation
-		jnc bignum_multiply_without_carry_3
+		jnc bignum_multiply_fixed_without_carry_3
 		# save flags
 		pushf
 		# prepare registers for carry operation
@@ -297,25 +254,25 @@ bignum_multiply_continue_multiplication:
 		popf
 		# propagate carry after last addition
 		# while( i < BIGNUM_SIZE) 
-		bignum_multiply_propagate_carry_3:
+		bignum_multiply_fixed_propagate_carry_3:
 			adcq $0,   16(%rcx, %rdi, CHUNK_SIZE)
 			incq %rdi
 			decq %rsi
-			jnc bignum_multiply_without_carry_3
-			jg bignum_multiply_propagate_carry_3
+			jnc bignum_multiply_fixed_without_carry_3
+			jg bignum_multiply_fixed_propagate_carry_3
 		
-	bignum_multiply_without_carry_3:
+	bignum_multiply_fixed_without_carry_3:
 
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
 		testq $SECOND_VALUE_SIGN_MASK, 16(%rsp)
-		jz bignum_multiply_positive_number_2
+		jz bignum_multiply_fixed_positive_number_2
 		
 		# fix number if negative 	
 		sub %rbx, 8(%rcx, %r14, CHUNK_SIZE)
 
 		# if no carry flag set, omit borrow propagation
-		jnc bignum_multiply_positive_number_2
+		jnc bignum_multiply_fixed_positive_number_2
 		# save flags
 		pushf
 		# prepare registers for carry operation
@@ -329,21 +286,21 @@ bignum_multiply_continue_multiplication:
 		popf
 
 		# while( i < BIGNUM_SIZE) 
-		bignum_multiply_propagate_borrow_2:
+		bignum_multiply_fixed_propagate_borrow_2:
 			sbbq $0,  16(%rcx, %rdi, CHUNK_SIZE)
 			incq %rdi
 			decq %rsi
-			jnc bignum_multiply_positive_number_2
-			jg bignum_multiply_propagate_borrow_2  
+			jnc bignum_multiply_fixed_positive_number_2
+			jg bignum_multiply_fixed_propagate_borrow_2  
 		
-	bignum_multiply_positive_number_2:  
+	bignum_multiply_fixed_positive_number_2:  
 		# calculate result index
 		incq %r14
 		# j++
 		incq %r13
 		# while( i < bignum_size-1 )
-		cmpq %r13, %r8
-		ja bignum_multiply_loop_last_arg
+		cmpq %r14, %r8
+		ja bignum_multiply_fixed_loop_last_arg
 
 	
 	# get last data chunk from first bignum 
@@ -367,10 +324,10 @@ bignum_multiply_continue_multiplication:
 	movq 8(%rsp), %rdx
 	# init loop counter
 	movq %rax, %rcx
-	bignum_multiply_test_loop:
+	bignum_multiply_fixed_test_loop:
 		movq (%rdx, %r14, CHUNK_SIZE), %rbx
 		incq %r14
-		loop bignum_multiply_test_loop
+		loop bignum_multiply_fixed_test_loop
 	# prepare result for return 
 	movq 8(%rsp), %rax
 	movq %r8, %rdx
@@ -403,4 +360,3 @@ zero_memory:
 
 	addq $8, %rsp	
 	ret
-
