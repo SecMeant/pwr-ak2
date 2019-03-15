@@ -25,4 +25,15 @@ bignum_copy:
 
 		decq %r8
 		jns bignum_copy_copyloop
-	ret
+	
+	bignum_copy_zeroextend_loop:
+		# if two indexes meet, exit
+		cmp %rcx, %rsi
+		jz bignum_copy_end
+	
+		decq %rsi
+		movq $0,(%rdi, %rsi, CHUNK_SIZE)
+		jmp bignum_copy_zeroextend_loop
+
+	bignum_copy_end:
+		ret
