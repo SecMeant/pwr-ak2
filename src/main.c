@@ -32,9 +32,35 @@ void add_test()
 	printf("0x%016lx 0x%016lx\n", *(num2+1), *num2);
 }
 
+void sub_test()
+{
+	int64_t num1[2] = {0xfffffffffffffffe ,0x7fffffffffffffff};
+	int64_t num2[2] = {0x5454545454545454 ,0x3434343434343433};
+	bignum b1 = {.bignum = num1, .bignum_size = 2};
+	bignum b2 = {.bignum = num2, .bignum_size = 2};
+	printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
+	printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
+	bignum_subtract(b1, b2);
+	printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
+	printf("0x%016lx 0x%016lx\n", *(num2+1), *num2);
+	printf("Result negative: %li\n", (int64_t)bignum_is_negative(b1));
+}
+
+void copy_test()
+{
+	int64_t num1[2] = {0xfffffffffffffffe ,0x7fffffffffffffff};
+	int64_t num2[2] = {0x5454545454545454 ,0x3434343434343433};
+	bignum b1 = {.bignum = num1, .bignum_size = 2};
+	bignum b2 = {.bignum = num2, .bignum_size = 2};
+	printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
+	printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
+	bignum_copy(b1, b2);
+	printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
+	printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
+}
 
 int main()
 {
-	add_test();
+	copy_test();
 	return 0;
 }
