@@ -17,6 +17,10 @@ extern void bignum_add(bignum, bignum);
 extern void bignum_subtract(bignum, bignum);
 extern void bignum_shift_left(bignum a, int64_t sw);
 extern void bignum_shift_right(bignum a, int64_t sw);
+extern bignum bignum_multiply(bignum first, bignum second);
+extern bignum bignum_multiply_fixed(bignum first, bignum second);
 
 bool bignum_is_negative(bignum b1);
 void bignum_copy(bignum b1, bignum b2);
+
+bignum bignum_power(bignum num, int exponent);

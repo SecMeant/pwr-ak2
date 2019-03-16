@@ -1,27 +1,18 @@
+.extern malloc
 CHUNK_SIZE = 8
 INT64_MAX = 0x7FFFFFFFFFFFFFFF
 FIRST_VALUE_SIGN_MASK = 0x1
 SECOND_VALUE_SIGN_MASK = 0x2
+
+ .text
+.global bignum_multiply_fixed
+ 
 # first bignum argument multiply with second bignum argument
 # return pointer to allocated memory
 # rdi -> R9   contains pointer to first bignum argument
 # rsi -> R8   contains information about size of first bignum
 # rdx -> R10  contains pointer to second bignum argument
 # rcx -> R8   contains information about size of second bignum
-
-#   	A B C
-# x 	D E F
-# ------------
-#		   FC
-#        FB
-#      FA
-#        EC
-#      EB
-#      ...
-# +
-# ------------
-.global bignum_multiply_fixed
- 
 bignum_multiply_fixed:
 	push %rbp
 	movq %rsp, %rbp
@@ -122,7 +113,7 @@ bignum_multiply_fixed_continue_multiplication:
 			pushf
 			# prepare registers for carry operation
 			# set start position
-			movq %r12, %rdi
+			movq %r14, %rdi
 			# set loop counter
 			movq %r15, %rsi
 			# decrease loop counter by propagation offset 
@@ -163,7 +154,7 @@ bignum_multiply_fixed_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -199,7 +190,7 @@ bignum_multiply_fixed_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -245,7 +236,7 @@ bignum_multiply_fixed_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -277,7 +268,7 @@ bignum_multiply_fixed_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -314,22 +305,9 @@ bignum_multiply_fixed_continue_multiplication:
 	add %rax,   (%rcx, %r14, CHUNK_SIZE)
 	adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 
-	# only for test
-	incq %r8
-	movq $0, %r14
-	movq %r8, %rax
-	movq $2, %rbx 
-	mul %rbx
-	# get result pointer
-	movq 8(%rsp), %rdx
-	# init loop counter
-	movq %rax, %rcx
-	bignum_multiply_fixed_test_loop:
-		movq (%rdx, %r14, CHUNK_SIZE), %rbx
-		incq %r14
-		loop bignum_multiply_fixed_test_loop
 	# prepare result for return 
 	movq 8(%rsp), %rax
+	incq %r8
 	movq %r8, %rdx
 	# restore stack
 	pop %r15

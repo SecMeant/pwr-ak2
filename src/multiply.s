@@ -1,48 +1,12 @@
 .extern malloc
 
-# define some variables
-BIGNUM_CHUNK = 7 # amount of bignum chunks
 CHUNK_SIZE = 8
 INT64_MAX = 0x7FFFFFFFFFFFFFFF
 FIRST_VALUE_SIGN_MASK = 0x1
 SECOND_VALUE_SIGN_MASK = 0x2
-# syscall requests
-SYS_EXIT = 60
 
-# buffer size
-BUFFER_SIZE = 40 * 1
 .text
-big_value_1: # 7 lines * 64bit argument = 448bit 
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-big_value_2: # 7 lines * 64bit argument = 448bit
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-  .8byte 0x2
-	
-.global multiply_test
 .global bignum_multiply
-
-multiply_test:
-
-	movq $BIGNUM_CHUNK, %r8
-	lea big_value_1(%rip), %r9
-	lea big_value_2(%rip), %r10
-	call bignum_multiply
-	pop %rax
-	movq %rbp, %rsp
-	movq $SYS_EXIT, %rax
-	xor %rdi, %rdi
-	syscall
 
 # first bignum argument multiply with second bignum argument
 # return pointer to allocated memory
@@ -62,8 +26,6 @@ multiply_test:
 #      ...
 # +
 # ------------
-
-
 bignum_multiply:
 	push %rbp
 	movq %rsp, %rbp
@@ -164,7 +126,7 @@ bignum_multiply_continue_multiplication:
 			pushf
 			# prepare registers for carry operation
 			# set start position
-			movq %r12, %rdi
+			movq %r14, %rdi
 			# set loop counter
 			movq %r15, %rsi
 			# decrease loop counter by propagation offset 
@@ -205,7 +167,7 @@ bignum_multiply_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -223,8 +185,7 @@ bignum_multiply_continue_multiplication:
 		
 	bignum_multiply_without_carry_2:
 		
-		# i++
-		incq %r12 
+	
 
 		# check if number is negative
 		#if( mask & first_bignum_negative || mask & second_bignum_negative )
@@ -241,7 +202,7 @@ bignum_multiply_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -260,7 +221,8 @@ bignum_multiply_continue_multiplication:
 		bignum_multiply_positive_number:  
 		#j =0
 		movq $0, %r13
-		
+		# i++
+		incq %r12 
 		# while( i < bignum_size-1 )
 		cmpq %r12, %r8
 		ja bignum_multiply_loop_outer
@@ -288,7 +250,7 @@ bignum_multiply_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -320,7 +282,7 @@ bignum_multiply_continue_multiplication:
 		pushf
 		# prepare registers for carry operation
 		# set start position
-		movq %r12, %rdi
+		movq %r14, %rdi
 		# set loop counter
 		movq %r15, %rsi
 		# decrease loop counter by propagation offset 
@@ -357,20 +319,7 @@ bignum_multiply_continue_multiplication:
 	add %rax,   (%rcx, %r14, CHUNK_SIZE)
 	adcq %rdx,  8(%rcx, %r14, CHUNK_SIZE)
 
-	# only for test
-	incq %r8
-	movq $0, %r14
-	movq %r8, %rax
-	movq $2, %rbx 
-	mul %rbx
-	# get result pointer
-	movq 8(%rsp), %rdx
-	# init loop counter
-	movq %rax, %rcx
-	bignum_multiply_test_loop:
-		movq (%rdx, %r14, CHUNK_SIZE), %rbx
-		incq %r14
-		loop bignum_multiply_test_loop
+	
 	# prepare result for return 
 	movq 8(%rsp), %rax
 	movq %r8, %rdx
