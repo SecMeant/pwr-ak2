@@ -60,7 +60,7 @@ void div_test()
 {
 	int64_t num1[8] = {0xffffffffffffffff,0xffffffffffffffff,0xffffffffffffffff, 0xffffffffffffffff,0xffffffffffffffff,0xffffffffffffffff, 0xffffffffffffffff, 0xff};
 	int64_t num2[8] = {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff,
- 0xffffffffff,0x7fffffffffffffff, 0x0};
+ 0xffffffffffffffff,0x7fffffffffffffff, 0x0};
 
 	bignum b1 = {.bignum = num1, .bignum_size = 8};
 	bignum b2 = {.bignum = num2, .bignum_size = 8};
