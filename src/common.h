@@ -23,8 +23,10 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 extern void bignum_add(bignum, bignum);
 extern void bignum_subtract(bignum, bignum);
 extern void bignum_divide(bignum, bignum);
-extern void bignum_shift_left(bignum a, int64_t sw);
-extern void bignum_shift_right(bignum a, int64_t sw);
+extern void bignum_shift_left_64(bignum a, int64_t sw);
+extern void bignum_shift_right_64(bignum a, int64_t sw);
+void bignum_shift_left(bignum a, int64_t sw);
+void bignum_shift_right(bignum a, int64_t sw);
 
 void bignum_print(bignum b);
 
@@ -33,6 +35,9 @@ bool bignum_is_zero(bignum b1);
 void bignum_copy(bignum b1, bignum b2);
 bignum bignum_extend_twice(bignum b1);
 void bignum_or_1(); // inserts 1 to lsb. (used when dividing)
+
+void bignum_shift_chunk_left(bignum a, int64_t sw);
+void bignum_shift_chunk_right(bignum a, int64_t sw);
 
 void bignum_free(bignum b);
 bignum bignum_make(int64_t size);

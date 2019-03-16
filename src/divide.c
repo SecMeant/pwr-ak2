@@ -13,10 +13,13 @@ void bignum_divide(bignum b1, bignum b2)
 
 	bignum result = bignum_make(b1.bignum_size);
 	// From now on divident is also current reminder
+	// TODO make functions for creating divident and divisor
+	// from b1 and b2 that extends and properly shifts
 	bignum divident = bignum_extend_twice(b1);
-	bignum divisor  = bignum_extend_twice(b2);
+	bignum divisor  = bignum_make(b1.bignum_size *2);
+	bignum_copy(divisor, b2);
 
-	int64_t shift = b1.bignum_size - 1;
+	int64_t shift = (b1.bignum_size * 64) - 1;
 	bignum_shift_left(divisor, shift);
 	while(shift >= 0)
 	{
@@ -30,9 +33,12 @@ void bignum_divide(bignum b1, bignum b2)
 			bignum_or_1(result);
 		
 		if(bignum_is_zero(divident))
+		{
+			bignum_shift_left(result, shift);
 			break;
+		}
 
-		bignum_shift_right(divident, 1);
+		bignum_shift_right(divisor, 1);
 		--shift;
 	}
 	
@@ -44,4 +50,5 @@ void bignum_divide(bignum b1, bignum b2)
 
 	bignum_free(divident);
 	bignum_free(divisor);
+	bignum_free(result);
 }
