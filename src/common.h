@@ -6,7 +6,7 @@
 
 // Size of bignum chunk is bytes
 #define CHUNK_SIZE 8
-
+#define BIGNUM_COMMON_SIZE 8
 typedef struct bignum_
 {
 	int64_t *bignum;
