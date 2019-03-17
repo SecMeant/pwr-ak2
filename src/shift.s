@@ -6,9 +6,14 @@ CHUNK_SIZE = 8
 	rdi = int64_t *bignum
 	rsi = int64_t bignum_size
 	rdx = int64_t sw
+	CAUTION: This function should only be used internally!
+	         It is able only to shift if shift range is
+					 smaller than size of chunks in bits.
+					 For bigger shifts, chunk shifting for part
+					 of the job should be used!
 */
-.global bignum_shift_left
-bignum_shift_left:
+.global bignum_shift_left_64
+bignum_shift_left_64:
 	# bits shifted out of previous chunk
 	xor %r9, %r9
 	# temp register for shifting out bits
@@ -38,6 +43,7 @@ bignum_shift_left:
 		# next iteartion of loop will use it to fill next chunks
 		# bits
 		mov %r8, %r9
+		xor %r8, %r8
 
 		# TODO i feel like this index counting can be done with
 		#      just one register. To be optimized.
@@ -54,42 +60,55 @@ bignum_shift_left:
 	rdi = int64_t *bignum
 	rsi = int64_t bignum_size
 	rdx = int64_t sw
+	CAUTION: This function should only be used internally!
+	         It is able only to shift if shift range is
+					 smaller than size of chunks in bits.
+					 For bigger shifts, chunk shifting for part
+					 of the job should be used!
 */
-.global bignum_shift_right
-bignum_shift_right:
-	# bits shifted out of previous chunk
-	xor %r9, %r9
-	# temp register for shifting out bits
-	xor %r8, %r8 
+.global bignum_shift_right_64
+bignum_shift_right_64:
 	# shift amount must be in cl register
 	mov %rdx, %rcx
-	# bignum index, start from most significant chunk
-	decq %rsi
-
-	bignum_shift_right_shift_loop:
-		# fetch bignum chunk
-		mov (%rdi, %rsi, CHUNK_SIZE), %r10
 	
-		# shift out bits to temp register
-		shrd %cl, %r10, %r8
+	# shift first chunk, its special case
+	# because first chunk will not shift out
+	# any bits
+	mov (%rdi), %r8
+	shr %cl, %r8
+	mov %r8, (%rdi)
 
-		# shift current chunk
-		shr %cl, %r10
+	# index
+	mov $1, %r9
 
-		# "shift in" bits from previous chunk
-		or %r9, %r10
+	# TODO this probably can be optimized
+	bignum_shift_right_shiftloop:
+	# while(bignum_size >= index)
+	cmp %r9, %rsi
+	jle bignum_shift_right_return
 
-		# save result
-		mov %r10, (%rdi, %rsi, CHUNK_SIZE)
+	# load current chunk
+	mov (%rdi, %r9, CHUNK_SIZE), %r10
+	
+	# buffer for storing shifted out bits
+	# need to be cleared each time
+	xor %r11, %r11
 
-		# move current shifted out bits to previous chnk bits
-		# next iteartion of loop will use it to fill next chunks
-		# bits
-		mov %r8, %r9
+	# shift out bits
+	shrd %cl, %r10, %r11
+	
+	# proper shift right of current chunk
+	shr %cl, %r10
+	
+	# save shifted result
+	mov %r10, (%rdi, %r9, CHUNK_SIZE)
+	
+	# or shifted out bits into previous chunk
+	or %r11, -CHUNK_SIZE(%rdi, %r9, CHUNK_SIZE)
+	
+	incq %r9
+	jmp bignum_shift_right_shiftloop
 
-		# index--
-		# while(index >= 0)
-		decq %rsi
-		jns bignum_shift_right_shift_loop
+	bignum_shift_right_return:
+		ret
 
-	ret 

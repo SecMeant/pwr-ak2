@@ -6,18 +6,49 @@ int64_t max(int64_t a, int64_t b)
 	return b;
 }
 
-void divide(bignum b1, bignum b2)
+void bignum_divide(bignum b1, bignum b2)
 {
-	int64_t n = max(b1.bignum_size, b2.bignum_size);
-	bignum result;
-	result.bignum = malloc(n * CHUNK_SIZE * 2);
-	assert(result.bignum);
-	result.bignum_size = n;
-	bignum_shift_left(b2, n);
-	
-	while(n>=0)
+	if(bignum_is_zero(b2))
+		bignum_fatal_error("Attempted division by 0.", ERR_ZERO_DIV);
+
+	bignum result = bignum_make(b1.bignum_size);
+	// From now on divident is also current reminder
+	// TODO make functions for creating divident and divisor
+	// from b1 and b2 that extends and properly shifts
+	bignum divident = bignum_extend_twice(b1);
+	bignum divisor  = bignum_make(b1.bignum_size *2);
+	bignum_copy(divisor, b2);
+
+	int64_t shift = (b1.bignum_size * 64) - 1;
+	bignum_shift_left(divisor, shift);
+	while(shift >= 0)
 	{
-		//if(bignum_is_negative(result))
-					
+		if(bignum_is_negative(divident))
+			bignum_add(divident, divisor);
+		else
+			bignum_subtract(divident, divisor);
+
+		bignum_shift_left(result, 1);
+		if(!bignum_is_negative(divident))
+			bignum_or_1(result);
+		
+		if(bignum_is_zero(divident))
+		{
+			bignum_shift_left(result, shift);
+			break;
+		}
+
+		bignum_shift_right(divisor, 1);
+		--shift;
 	}
+	
+	if(bignum_is_negative(divident))
+		bignum_add(divident, b2);
+
+	bignum_print(result);
+	bignum_print(divident);
+
+	bignum_free(divident);
+	bignum_free(divisor);
+	bignum_free(result);
 }
