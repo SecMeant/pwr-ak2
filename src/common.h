@@ -18,6 +18,12 @@ typedef struct bignum_
 	int64_t bignum_size;
 } bignum;
 
+typedef struct bignum_divide_result_
+{
+	bignum result;
+	bignum reminder;
+}bignum_divide_result;
+
 void bignum_fatal_error(const char *msg, int64_t errno);
 
 extern void bignum_add(bignum, bignum);
@@ -28,7 +34,7 @@ extern void bignum_shift_left_64(bignum a, int64_t sw);
 extern void bignum_shift_right_64(bignum a, int64_t sw);
 extern bignum bignum_multiply(bignum first, bignum second);
 extern bignum bignum_multiply_fixed(bignum first, bignum second);
-extern void bignum_divide(bignum, bignum);
+extern bignum_divide_result bignum_divide(bignum, bignum);
 
 void bignum_print(bignum b);
 
@@ -46,3 +52,4 @@ void bignum_shift_chunk_right(bignum a, int64_t sw);
 void bignum_free(bignum b);
 bignum bignum_make(int64_t size);
 void bignum_alloc(bignum *b1, int64_t size);
+void bignum_realloc(bignum *b1, int64_t newsize);

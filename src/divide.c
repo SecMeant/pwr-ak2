@@ -6,10 +6,11 @@ int64_t max(int64_t a, int64_t b)
 	return b;
 }
 
-void bignum_divide(bignum b1, bignum b2)
+bignum_divide_result bignum_divide(bignum b1, bignum b2)
 {
 	if(bignum_is_zero(b2))
-		bignum_fatal_error("Attempted division by 0.", ERR_ZERO_DIV);
+		bignum_fatal_error("Attempted division by 0.",
+		                   ERR_ZERO_DIV);
 
 	bignum result = bignum_make(b1.bignum_size);
 	// From now on divident is also current reminder
@@ -45,10 +46,12 @@ void bignum_divide(bignum b1, bignum b2)
 	if(bignum_is_negative(divident))
 		bignum_add(divident, b2);
 
-	bignum_print(result);
-	bignum_print(divident);
-
-	bignum_free(divident);
+	// TODO this reallocs might not be a good idea
+	bignum_realloc(&divident, divident.bignum_size / 2);
 	bignum_free(divisor);
-	bignum_free(result);
+
+	bignum_divide_result ret;
+	ret.result = result;
+	ret.reminder = divident;
+	return ret;
 }

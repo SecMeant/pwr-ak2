@@ -125,3 +125,11 @@ bignum bignum_make(int64_t size)
 	assert(ret.bignum);
 	return ret;
 }
+
+void bignum_realloc(bignum *b, int64_t newsize)
+{
+	b->bignum = (int64_t*)realloc(b->bignum,
+                               newsize * CHUNK_SIZE);
+	b->bignum_size = newsize;
+	assert(b->bignum);
+}
