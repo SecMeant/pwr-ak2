@@ -2,34 +2,54 @@
 
 bool trial_test(bignum num){
 	 bignum condition, i;
-	 int tab[] = {0x1};
-	 condition.bignum = tab;
+
+	 int64_t condition_array[BIGNUM_COMMON_SIZE] = {0x0} ;
+	 int64_t counter_array[BIGNUM_COMMON_SIZE] = {0x0};
+
+	 condition.bignum = condition_array;
 	 condition.bignum_size = 1;
 
 	 i.bignum_size = BIGNUM_COMMON_SIZE;
-	 i.bignum = {0x0};
-	 for( bignum a = bignum_multiply_fixed(i,i); greater_operator(a, num); bignum_add(i) )
-	 	if( bignum_equals(bignum_modul(num,a), condition) )
+	 i.bignum = counter_array;
+
+	 for( bignum a = bignum_multiply_fixed(i,i); bignum_less_than(a, num); bignum_increment(i) )
+	 	if( bignums_are_equal(bignum_modul(num,a), condition) )
 	 		return false;
 	 return true;
 	 
 }
 
-bool bignum_equals(bignum a, bignum b){
-	uint64_t min,max;
-	if(a.bignum_size < b.bignum_size){
-		max = b;
-		min = a;
-	}
-	else {
-		max = a;
-		min = b
-	}
+bool bignums_are_equal(bignum lhs, bignum rhs){
+	
+	bignum_subtract(lhs,rhs);
 
-	for(int i =0 ; i < max; i++)
-		if(i < min) 
-			if(a.bignum[i] == b.bignum[i]) 
+	for(int64_t i =0 ; i < lhs.bignum_size; i++)
+		if(lhs.bignum[i] != 0)
 			return false;
-		else
+	return true;
+}
 
-}	
+bool bignum_less_than(bignum lhs, bignum rhs){
+
+	bignum_subtract(lhs,rhs);
+	
+	for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
+		if(lhs.bignum[i] < 0)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+
+bool bignum_greater_than(bignum lhs, bignum rhs){
+	bignum_subtract(lhs,rhs);
+	
+	for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
+		if(lhs.bignum[i] > 0)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}

@@ -36,7 +36,4 @@ bignum_subtract_smallest_found:
     jnz bignum_subtract_L1
 
 	ret
-# from first bignum argument substract second bignum argument
-# rax contains sizeof currently handle bignums
-# rbx contains pointer to first bignum argument
-# rcx constains pointer to second bignum argument
+
