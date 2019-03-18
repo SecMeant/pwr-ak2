@@ -2,6 +2,7 @@
 
 bool trial_test(bignum num){
 	 bignum condition, i;
+	 bignum_divide_result res;
 
 	 int64_t condition_array[BIGNUM_COMMON_SIZE] = {0x0} ;
 	 int64_t counter_array[BIGNUM_COMMON_SIZE] = {0x0};
@@ -13,7 +14,9 @@ bool trial_test(bignum num){
 	 i.bignum = counter_array;
 
 	 for( bignum a = bignum_multiply_fixed(i,i); bignum_less_than(a, num); bignum_increment(i) )
-	 	if( bignums_are_equal(bignum_modul(num,a), condition) )
+	 	
+	 	res = bignum_divide(num,a);
+	 	if( bignums_are_equal(res.reminder, condition) )
 	 		return false;
 	 return true;
 	 
