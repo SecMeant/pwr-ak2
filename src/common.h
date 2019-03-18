@@ -7,6 +7,7 @@
 
 // Size of bignum chunk is bytes
 #define CHUNK_SIZE 8
+#define BIGNUM_COMMON_SIZE 8
 // Size of bognum chunk in bits
 #define CHUNK_SIZE_BITS 64
 
@@ -28,10 +29,11 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 
 extern void bignum_add(bignum, bignum);
 extern void bignum_subtract(bignum, bignum);
-extern void bignum_shift_left(bignum a, int64_t sw);
-extern void bignum_shift_right(bignum a, int64_t sw);
+extern void bignum_increment(bignum a);
 extern void bignum_shift_left_64(bignum a, int64_t sw);
 extern void bignum_shift_right_64(bignum a, int64_t sw);
+
+extern bignum bignum_modul(bignum,bignum);
 extern bignum bignum_multiply(bignum first, bignum second);
 extern bignum bignum_multiply_fixed(bignum first, bignum second);
 extern bignum_divide_result bignum_divide(bignum, bignum);
@@ -53,3 +55,7 @@ void bignum_free(bignum b);
 bignum bignum_make(int64_t size);
 void bignum_alloc(bignum *b1, int64_t size);
 void bignum_realloc(bignum *b1, int64_t newsize);
+bool bignums_are_equal(bignum a, bignum b);
+bool bignum_less_than(bignum lhs, bignum rhs);
+bool bignum_greater_than(bignum a, bignum b);
+bool trial_test(bignum a);

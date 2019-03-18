@@ -7,7 +7,7 @@ void shift_test()
 	int64_t num1[] = {0,0,3,0};
 	bignum bignum_sh = {.bignum = num1, .bignum_size = 4};
 	bignum_print(bignum_sh);
-	bignum_shift_right(bignum_sh, 1);
+	bignum_shift_right_64(bignum_sh, 1);
 	bignum_print(bignum_sh);
 }
 
@@ -58,14 +58,14 @@ void copy_test()
 void multiply_test(){
 
 	bignum first, second;
-	first.bignum_size = 8;
+	first.bignum_size = BIGNUM_COMMON_SIZE;
 	first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
 	first.bignum[0] = 0xfffffffffffffffe;
 	first.bignum[1] = 0xffffffffffffffff;
 	first.bignum[2] = 0xffffffffffffffff;
 	first.bignum[3] = 0xffffffffffffffff;
 	
-	second.bignum_size = 4;
+	second.bignum_size = BIGNUM_COMMON_SIZE;
 	second.bignum = (int64_t*)malloc(sizeof(uint64_t)*second.bignum_size);
 	second.bignum[0] = 0xfffffffffffffffd;
 	second.bignum[1] = 0xffffffffffffffff;
@@ -75,11 +75,11 @@ void multiply_test(){
 	bignum res = bignum_multiply_fixed(first,second);
 	for(int i =0; i < 4; i++)
 		printf( "%lx\n", (uint64_t)res.bignum[i] );
-
 }
+
 void power_test(){
 	bignum first;
-	first.bignum_size = 8;
+	first.bignum_size = BIGNUM_COMMON_SIZE;
 	first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
 	first.bignum[0] = 0xfffffffffffffffd;
 	first.bignum[1] = 0x5454545454545454;
@@ -90,7 +90,7 @@ void power_test(){
 	first.bignum[7] = 0;
 
 	bignum res = bignum_power(first,2);
-	for(int i =0; i < 8; i++)
+	for(int i =0; i < BIGNUM_COMMON_SIZE; i++)
 		printf( "%lx\n", (uint64_t)res.bignum[i] );
 }
 
