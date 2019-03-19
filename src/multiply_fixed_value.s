@@ -31,7 +31,7 @@ bignum_multiply_fixed:
 
 bignum_multiply_fixed_bigest_found:
 	# allocate memory on stack
-	subq $32, %rsp
+	subq $40, %rsp
 	# save registrs
 	movq %r8, 16(%rsp)
 	movq %rdi, 24(%rsp)
@@ -41,8 +41,10 @@ bignum_multiply_fixed_bigest_found:
 	# convert to word size   
 	movq $8, %rbx
 	mulq %rbx
+
 	# allocate memory for result 
 	movq %rax, %rdi
+	add $8, %rdi
 	call malloc
 	# restore registrs
 	movq 16(%rsp), %r8
@@ -310,6 +312,7 @@ bignum_multiply_fixed_continue_multiplication:
 	incq %r8
 	movq %r8, %rdx
 	# restore stack
+	addq $40, %rsp
 	pop %r15
 	pop %r14
 	pop %r13
@@ -317,6 +320,7 @@ bignum_multiply_fixed_continue_multiplication:
 	pop %rbx
 	movq %rbp, %rsp
 	pop %rbp
+
 	ret
 
 # set given memory to 0 value
@@ -326,7 +330,7 @@ zero_memory:
 	# int64 i =0
 	subq $8, %rsp
 	movq $0, (%rsp)
-	L0:
+	zero_memory_L0:
 		# *(mem + i) = 0 
 		movq (%rsp), %rcx
 		movq $0, (%rax, %rcx, CHUNK_SIZE)
@@ -334,7 +338,7 @@ zero_memory:
 		incq (%rsp)
 		# size--
 		decq %rbx
-		jnz L0	
+		jnz zero_memory_L0	
 
 	addq $8, %rsp	
 	ret

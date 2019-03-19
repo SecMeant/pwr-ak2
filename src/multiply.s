@@ -44,7 +44,7 @@ bignum_multiply:
 
 bignum_multiply_bigest_found:
 	# allocate memory on stack
-	subq $32, %rsp
+	subq $40, %rsp
 	# save registrs
 	movq %r8, 16(%rsp)
 	movq %rdi, 24(%rsp)
@@ -324,6 +324,7 @@ bignum_multiply_continue_multiplication:
 	movq 8(%rsp), %rax
 	movq %r8, %rdx
 	# restore stack
+	addq $40, %rsp
 	pop %r15
 	pop %r14
 	pop %r13

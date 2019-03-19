@@ -7,7 +7,7 @@
 
 // Size of bignum chunk is bytes
 #define CHUNK_SIZE 8
-#define BIGNUM_COMMON_SIZE 8
+#define BIGNUM_COMMON_SIZE 2
 // Size of bognum chunk in bits
 #define CHUNK_SIZE_BITS 64
 

@@ -1,6 +1,6 @@
 CC=gcc
 AS=as
-CFLAGS=-Wall -Wextra -std=c11 -fsanitize=address
+CFLAGS=-Wall -Wextra -std=c11
 ASFLAGS=
 OUTDIR=.
 SRCDIR=./src

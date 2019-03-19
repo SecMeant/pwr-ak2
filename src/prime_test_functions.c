@@ -1,25 +1,41 @@
 #include "common.h"
 
 bool trial_test(bignum num){
-	 bignum condition, i;
+	 bignum i;
 	 bignum_divide_result res;
 
-	 int64_t condition_array[BIGNUM_COMMON_SIZE] = {0x0} ;
-	 int64_t counter_array[BIGNUM_COMMON_SIZE] = {0x0};
-
-	 condition.bignum = condition_array;
-	 condition.bignum_size = 1;
+	 int64_t counter_array[BIGNUM_COMMON_SIZE] = {0x2,0x0};
 
 	 i.bignum_size = BIGNUM_COMMON_SIZE;
 	 i.bignum = counter_array;
+	 bignum i_2;
 
-	 for( bignum a = bignum_multiply_fixed(i,i); bignum_less_than(a, num); bignum_increment(i) )
+	 while( true ){
 	 	
-	 	res = bignum_divide(num,a);
-	 	if( bignums_are_equal(res.reminder, condition) )
+	 	i_2 = bignum_multiply_fixed(i,i);
+	 	
+	 	res = bignum_divide(num,i);
+
+	 	
+	 	if( bignum_is_zero( res.reminder ) ){
+		 	bignum_free( res.result );
+			bignum_free( res.reminder );
+	 		free( i_2.bignum );
 	 		return false;
-	 return true;
-	 
+	 	}
+	 	
+		bignum_free( res.result );
+		bignum_free( res.reminder );
+	 	bignum_print(i_2);
+	 	if( bignum_greater_than(i_2, num) ){
+	 		free( i_2.bignum );
+	 		return true; 
+	 	}
+
+		free( i_2.bignum );
+	 	bignum_increment(i);	
+	 }
+
 }
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
@@ -29,30 +45,34 @@ bool bignums_are_equal(bignum lhs, bignum rhs){
 	for(int64_t i =0 ; i < lhs.bignum_size; i++)
 		if(lhs.bignum[i] != 0)
 			return false;
+	
 	return true;
 }
 
 bool bignum_less_than(bignum lhs, bignum rhs){
 
 	bignum_subtract(lhs,rhs);
-	
+	// bignum_print(lhs);
 	for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
 		if(lhs.bignum[i] < 0)
 			return true;
-		else
+		else if(lhs.bignum[i] != 0)
 			return false;
 	}
 	return false;
 }
 
 bool bignum_greater_than(bignum lhs, bignum rhs){
+	// int64_t sub_result;
+	// for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
+	// 	sub_result =lhs.bignum[i] - rhs.bignum[i];
+	// 	if( sub_result > 0 )
+	// 		return true;
+	// 	else if (sub_result < 0)
+	// 		return false;
+	// }
 	bignum_subtract(lhs,rhs);
-	
-	for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
-		if(lhs.bignum[i] > 0)
-			return true;
-		else
-			return false;
-	}
-	return false;
+
+
+	return !bignum_is_negative(lhs);	
 }

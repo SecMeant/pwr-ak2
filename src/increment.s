@@ -11,7 +11,7 @@ bignum_increment:
 
   bignum_increment_propagate_carry:
     adcq $0, 8(%rdi, %r8, CHUNK_SIZE)
-    incq %rcx
+    add  $1, %rcx
     decq %rsi
     jnc bignum_increment_finish
     jg bignum_increment_propagate_carry

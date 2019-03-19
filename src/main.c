@@ -58,14 +58,14 @@ void copy_test()
 void multiply_test(){
 
 	bignum first, second;
-	first.bignum_size = BIGNUM_COMMON_SIZE;
+	first.bignum_size = 4;
 	first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
 	first.bignum[0] = 0xfffffffffffffffe;
 	first.bignum[1] = 0xffffffffffffffff;
 	first.bignum[2] = 0xffffffffffffffff;
 	first.bignum[3] = 0xffffffffffffffff;
 	
-	second.bignum_size = BIGNUM_COMMON_SIZE;
+	second.bignum_size = 4;
 	second.bignum = (int64_t*)malloc(sizeof(uint64_t)*second.bignum_size);
 	second.bignum[0] = 0xfffffffffffffffd;
 	second.bignum[1] = 0xffffffffffffffff;
@@ -75,23 +75,62 @@ void multiply_test(){
 	bignum res = bignum_multiply_fixed(first,second);
 	for(int i =0; i < 4; i++)
 		printf( "%lx\n", (uint64_t)res.bignum[i] );
+	free (first.bignum);
+	free (second.bignum);
+	free (res.bignum);
+
 }
 
 void power_test(){
 	bignum first;
 	first.bignum_size = BIGNUM_COMMON_SIZE;
 	first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
-	first.bignum[0] = 0xfffffffffffffffd;
-	first.bignum[1] = 0x5454545454545454;
-	first.bignum[2] = 0x3434343434343433;
-	first.bignum[4] = 0;
-	first.bignum[5] = 0;
-	first.bignum[6] = 0;
-	first.bignum[7] = 0;
+	first.bignum[0] = 0x2;
+	first.bignum[1] = 0x0;
+	first.bignum[2] = 0x0;
+	first.bignum[3] = 0x0;
+	first.bignum[4] = 0x0;
+	first.bignum[5] = 0x0;
+	first.bignum[6] = 0x0;
+	first.bignum[7] = 0x0;
 
-	bignum res = bignum_power(first,2);
+	bignum res = bignum_power(first,256);
 	for(int i =0; i < BIGNUM_COMMON_SIZE; i++)
 		printf( "%lx\n", (uint64_t)res.bignum[i] );
+
+	free(first.bignum);
+	free(res.bignum);
+
+
+}
+void bignum_increment_test(){
+	bignum first;
+	first.bignum_size = 3;
+	first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
+	first.bignum[0] = 0xffffffffffffffff;
+	first.bignum[1] = 0xffffffffffffffff;
+	first.bignum[2] = 0x0;
+	for (int i = 0; i < 100; ++i)
+	{
+		bignum_increment(first);
+		bignum_print(first);		
+	}
+	free(first.bignum);
+
+}
+
+void isPrime(){
+	int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll, 0x0};
+	
+	bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
+
+	bool prime = trial_test(b1);
+	
+	if( prime )
+		printf("Number is prime\n");
+	else
+		printf("Number is not prime\n");
+
 }
 
 bignum_divide_result div_test()
@@ -107,10 +146,8 @@ bignum_divide_result div_test()
 
 int main()
 {
-	bignum_divide_result res = div_test();
-	bignum_print(res.result);
-	bignum_print(res.reminder);
-	bignum_free(res.result);
-	bignum_free(res.reminder);
+	
+	isPrime();
+
 	return 0;
 }
