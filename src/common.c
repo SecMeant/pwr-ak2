@@ -39,12 +39,24 @@ void bignum_shift_right(bignum a, int64_t sw)
   bignum_shift_right_64(a, sw);
 }
 
-void bignum_print(bignum b)
+void bignum_print_chunks(bignum b)
 {
   int64_t index = b.bignum_size-1;
   while(index >= 0)
   {
     printf("0x%016lx ", b.bignum[index]);
+    --index;
+  }
+  putchar('\n');
+}
+
+void bignum_print(bignum b)
+{
+  int64_t index = b.bignum_size-1;
+  printf("0x");
+  while(index >= 0)
+  {
+    printf("%016lx", b.bignum[index]);
     --index;
   }
   putchar('\n');

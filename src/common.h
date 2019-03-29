@@ -42,6 +42,7 @@ bignum bignum_multiply(bignum first, bignum second);
 bignum bignum_multiply_fixed(bignum first, bignum second);
 bignum_divide_result bignum_divide(bignum, bignum);
 
+void bignum_print_chunks(bignum b);
 void bignum_print(bignum b);
 
 bool bignum_is_negative(bignum b1);
