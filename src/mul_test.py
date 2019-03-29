@@ -4,10 +4,10 @@ c_i64_p = ctypes.POINTER(ctypes.c_int64)
 uint64_array_c = ctypes.c_uint64 * 2
 
 class bigint(ctypes.Structure):
-	_fields_= [
-		("val", c_i64_p),
-		("size", ctypes.c_uint64)
-	]
+  _fields_= [
+    ("val", c_i64_p),
+    ("size", ctypes.c_uint64)
+  ]
 
 function = ctypes.CDLL("./multiply.so")
 in_data = np.array([0x10, 0x11])

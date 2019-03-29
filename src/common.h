@@ -15,14 +15,14 @@
 
 typedef struct bignum_
 {
-	int64_t *bignum;
-	int64_t bignum_size;
+  int64_t *bignum;
+  int64_t bignum_size;
 } bignum;
 
 typedef struct bignum_divide_result_
 {
-	bignum result;
-	bignum reminder;
+  bignum result;
+  bignum reminder;
 }bignum_divide_result;
 
 void bignum_fatal_error(const char *msg, int64_t errno);

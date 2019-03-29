@@ -15,12 +15,12 @@ bignum_subtract:
   movq %rsi,%rax
 
 bignum_subtract_smallest_found:
-	# clear carry flag
-	clc
-	# set index counter to 0
-	movq $0, %r10
-	# make divison with borrow
-	bignum_subtract_L1:
+  # clear carry flag
+  clc
+  # set index counter to 0
+  movq $0, %r10
+  # make divison with borrow
+  bignum_subtract_L1:
     # arg1 = *(big_value_1 +off)
     movq (%rdi, %r10, WORD_SIZE), %r8
     # arg2 = *(big_value_2 + off)
@@ -35,5 +35,5 @@ bignum_subtract_smallest_found:
     decq %rax
     jnz bignum_subtract_L1
 
-	ret
+  ret
 
