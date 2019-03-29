@@ -22,10 +22,10 @@ clean:
 ${OBJDIR}/%.o : ${SRCDIR}/%.s
 	${AS} ${ASFLAGS} -c $< -o $@
 
-${OBJDIR}/%.o : ${SRCDIR}/%.c
+${OBJDIR}/%.o : ${SRCDIR}/%.c ${SRCDIR}/%.h
 	${CC} ${CFLAGS} -c $< -o $@
 
-${OBJDIR}/%.o : ${SRCDIR}/%.c ${SRCDIR}/%.h
+${OBJDIR}/%.o : ${SRCDIR}/%.c
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${OUTDIR}/${TARGET} : ${OBJECTS}
