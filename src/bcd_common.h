@@ -28,7 +28,7 @@ bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1(bcd_bignum b);
 
-// add first bignum with sencod bignum 
+// sum first bignum with sencod bignum 
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
 void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
@@ -39,13 +39,18 @@ void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
 // TODO(all) change name to bcd_bignum_subtract for compatibility.
 void bcd_bignum_sub(bcd_bignum b1, bcd_bignum b2);
 
+// function allocates memory space enought to save whole result
+// which means the result can be as big as sum of length of two bignums size 
 bcd_bignum bcd_bignum_mul(bcd_bignum b1, bcd_bignum b2);
 bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2);
 
+// make multiplication and save result in allocated memory 
+// which size is as big as size of the larger factor
+// NOTE the result can be cuted 
+bcd_bignum bcd_bignum_mul_with_crop(bcd_bignum b1, bcd_bignum b2);
+
+
 void bcd_bignum_print(bcd_bignum b);
-
-// bcd_bignum_divide_result bcd_bignum_mul(bcd_bignum b1, bcd_bignum b2);
-
 // bcd memory managment stuff
 void bcd_bignum_free(bcd_bignum b);
 bcd_bignum bcd_bignum_make(int64_t size);
