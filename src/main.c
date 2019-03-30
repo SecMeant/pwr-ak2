@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "common.h"
+#include "bignum_common.h"
 #include "bcd_common.h"
 void shift_test()
 {

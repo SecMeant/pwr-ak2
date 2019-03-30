@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bignum_common.h"
 
 bool trial_test(bignum num){
 	 bignum i;

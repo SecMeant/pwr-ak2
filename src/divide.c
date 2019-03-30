@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bignum_common.h"
 
 int64_t max(int64_t a, int64_t b)
 {
