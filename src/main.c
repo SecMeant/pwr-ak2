@@ -168,11 +168,31 @@ void bcd_add_test()
 }
 
 
+void bcd_sub_test()
+{
+	bcd_bignum b1 = bcd_bignum_make(9);
+	bcd_bignum b2 = bcd_bignum_make(6);
+	uint8_t num1_static[] = {1,0,0,0,0,0};
+	uint8_t num2_static[] ={0,0,0,0,0,0,0,0,0};
+	
+	memcpy(b1.bignum, num2_static, b1.bignum_size);
+	memcpy(b2.bignum, num1_static, b2.bignum_size);
+
+	for(int i =0; i < 8; i++){
+		printf("%x",b1.bignum[i] );	
+	}
+	puts("");
+	bcd_bignum_sub(b1, b2);
+
+	for(int i =0; i < 9; i++){
+		printf("%x",b1.bignum[i] );	
+	}
+}
 
 int main()
 {
 	
-	bcd_add_test();
+	bcd_sub_test();
 
 	return 0;
 }

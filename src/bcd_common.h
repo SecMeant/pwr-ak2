@@ -1,8 +1,8 @@
+#pragma once
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
-#pragma once
 #define BCD_U8_MASK 0x0f
 #define BCD_CHUNK_SIZE sizeof(uint8_t)
 // we will use unpacked bcd technique
