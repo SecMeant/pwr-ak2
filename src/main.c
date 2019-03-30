@@ -217,11 +217,37 @@ void bcd_mul_test()
 	}
 }
 
+void bcd_mul_crop_test()
+{
+	bcd_bignum b1 = bcd_bignum_make(9);
+	bcd_bignum b2 = bcd_bignum_make(6);
+	uint8_t num1_static[] = {2,2,2,2,2,2};
+	uint8_t num2_static[] = {2,2,2,2,2,2,2,2,2};
+	
+	memcpy(b1.bignum, num2_static, b1.bignum_size);
+	memcpy(b2.bignum, num1_static, b2.bignum_size);
+
+	for(int i =0; i < 9; i++){
+		printf("%x",b1.bignum[i] );	
+	}
+	puts("");
+
+	for(int i =0; i < 6; i++){
+		printf("%x",b2.bignum[i] );	
+	}
+	puts("");
+
+	bcd_bignum res = bcd_bignum_mul_with_crop(b1, b2);
+
+	for(int i = 0; i < b1.bignum_size; i++){
+		printf("%x", res.bignum[i]);	
+	}
+}
 
 int main()
 {
 	
-	bcd_mul_test();
+	bcd_mul_crop_test();
 
 	return 0;
 }
