@@ -53,6 +53,8 @@ bignum bignum_power(bignum num, int exponent);
 bignum bignum_extend_twice(bignum b1);
 void bignum_or_1(); // inserts 1 to lsb. (used when dividing)
 
+int64_t bignum_effective_width(bignum b);
+
 void bignum_free(bignum b);
 bignum bignum_make(int64_t size);
 void bignum_alloc(bignum *b1, int64_t size);
