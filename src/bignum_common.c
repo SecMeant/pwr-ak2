@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bignum_common.h"
 #include <stdio.h>
 
 void bignum_fatal_error(const char *msg, int64_t errno)
