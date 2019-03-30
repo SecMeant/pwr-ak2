@@ -30,7 +30,7 @@ bool trial_test(bignum num){
 	 	
 	 	if( bignum_greater_than(i_2, num) ){
 	 		free( i_2.bignum );
-	 		return true; 
+	 		return true;
 	 	}
 
 		free( i_2.bignum );
