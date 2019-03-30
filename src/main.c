@@ -148,10 +148,13 @@ bignum_divide_result div_test()
 
 void bcd_add_test()
 {
-	uint8_t num1[] = {9,9,8,9,9,9,9,9,0};
-	uint8_t num2[] = {1,3,1,0,0,0};
-	bcd_bignum b1 = {.bignum = num1, .bignum_size = 9};
-	bcd_bignum b2 = {.bignum = num2, .bignum_size = 6};
+	bcd_bignum b1 = bcd_bignum_make(9);
+	bcd_bignum b2 = bcd_bignum_make(6);
+	uint8_t num1_static[] = {1,0,0,0,0,0};
+	uint8_t num2_static[] ={9,9,9,9,9,9,9,9,0};
+	
+	memcpy(b1.bignum, num2_static, b1.bignum_size);
+	memcpy(b2.bignum, num1_static, b2.bignum_size);
 
 	for(int i =0; i < 8; i++){
 		printf("%x",b1.bignum[i] );	
