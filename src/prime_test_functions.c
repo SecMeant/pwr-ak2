@@ -27,6 +27,7 @@ bool trial_test(bignum num){
 		bignum_free( res.result );
 		bignum_free( res.reminder );
 	 	bignum_print(i_2);
+	 	
 	 	if( bignum_greater_than(i_2, num) ){
 	 		free( i_2.bignum );
 	 		return true; 

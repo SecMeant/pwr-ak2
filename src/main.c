@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "common.h"
-
+#include "bcd_common.h"
 void shift_test()
 {
 	int64_t num1[] = {0,0,3,0};
@@ -144,10 +144,32 @@ bignum_divide_result div_test()
 	return bignum_divide(b1,b2);
 }
 
+
+
+void bcd_add_test()
+{
+	uint8_t num1[] = {9,9,8,9,9,9,9,9,0};
+	uint8_t num2[] = {1,3,1,0,0,0};
+	bcd_bignum b1 = {.bignum = num1, .bignum_size = 9};
+	bcd_bignum b2 = {.bignum = num2, .bignum_size = 6};
+
+	for(int i =0; i < 8; i++){
+		printf("%x",b1.bignum[i] );	
+	}
+	puts("");
+	bcd_bignum_add(b1, b2);
+
+	for(int i =0; i < 9; i++){
+		printf("%x",b1.bignum[i] );	
+	}
+}
+
+
+
 int main()
 {
 	
-	isPrime();
+	bcd_add_test();
 
 	return 0;
 }
