@@ -4,14 +4,14 @@
 // we will use unpacked bcd technique
 typedef struct bcd_bignum_
 {
-	uint8_t *bignum;
-	int64_t bignum_size;
+  uint8_t *bignum;
+  int64_t bignum_size;
 } bcd_bignum;
 
 typedef struct bcd_bignum_divide_result_
 {
-	bcd_bignum result;
-	bcd_bignum reminder;
+  bcd_bignum result;
+  bcd_bignum reminder;
 }bcd_bignum_divide_result;
 
 
