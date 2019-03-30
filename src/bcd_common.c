@@ -1,7 +1,56 @@
 #include "bcd_common.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
+void bcd_bignum_shift_left(bcd_bignum b, int64_t sw)
+{
+  // Shift out.
+  int64_t i = b.bignum_size -1;
+  while(i >= b.bignum_size - sw)
+  {
+    b.bignum[i] = 0;
+    --i;
+  }
+
+  for(int64_t i = b.bignum_size - 1; i >= 0; --i)
+  {
+    b.bignum[i+sw] = b.bignum[i];
+  }
+
+  for(int64_t i = sw; i >= 0; --i)
+  {
+    b.bignum[i] = 0;
+  }
+}
+
+void bcd_bignum_shift_right(bcd_bignum b, int64_t sw)
+{
+  // Shift out.
+  int64_t from = sw;
+  int64_t to = from-sw;
+  while(from < b.bignum_size)
+  {
+    b.bignum[to] = b.bignum[from];
+    ++from;
+    ++to;
+  }
+
+  while(to < b.bignum_size)
+  {
+    b.bignum[to] = 0;
+    ++to;
+  }
+}
+
+void bcd_bignum_print(bcd_bignum b)
+{
+  for(int64_t digit = b.bignum_size -1; digit >= 0; --digit)
+  {
+    printf("%hhi", b.bignum[digit]);
+  }
+  puts("");
+}
 
 void bcd_bignum_free(bcd_bignum b)
 {
