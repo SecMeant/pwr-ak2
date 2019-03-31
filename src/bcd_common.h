@@ -33,10 +33,13 @@ void bcd_bignum_shift_right(bcd_bignum b, int64_t sw);
 bool bcd_bignum_is_zero(bcd_bignum b);
 void bcd_bignum_fatal_error(const char *msg, int64_t errno);
 void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
+bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size);
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1(bcd_bignum b);
 bool bcd_trial_test(bcd_bignum b1);
+int64_t bcd_bignum_effective_width(bcd_bignum b);
+
 // sum first bignum with sencod bignum 
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
