@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-const char * bcd_bignum_example = "524287";
+const char * bcd_bignum_example = "2305843009213693951";
 
 void bcd_bignum_fatal_error(const char *msg, int64_t errno)
 {

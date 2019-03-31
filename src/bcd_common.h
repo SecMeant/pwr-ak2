@@ -5,7 +5,7 @@
 #include <string.h>
 #define BCD_U8_MASK 0x0f
 #define BCD_CHUNK_SIZE sizeof(uint8_t)
-#define BCD_COMMON_SIZE 50
+#define BCD_COMMON_SIZE 25
 #define BCD_ERR_ZERO_DIV -11
 
 extern const char * bcd_bignum_example;
@@ -60,7 +60,8 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2);
 // which size is as big as size of the larger factor
 // NOTE the result can be cut
 bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2);
-
+// multiply bignums and save result in given argument
+void bcd_bignum_mul_fixed_no_return(bcd_bignum b1, bcd_bignum b2, bcd_bignum result);
 bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent);
 
 void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
