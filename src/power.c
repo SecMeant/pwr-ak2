@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bignum_common.h"
 #include <stdio.h>
 bignum bignum_power(bignum num, int exponent){
   

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <string.h>
-#include "common.h"
+#include "bignum_common.h"
 
 ssize_t getline(char **, size_t *, FILE *);
 

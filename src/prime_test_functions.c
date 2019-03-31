@@ -1,4 +1,4 @@
-#include "common.h"
+#include "bignum_common.h"
 
 bool trial_test(bignum num){
    bignum i;
@@ -11,19 +11,18 @@ bool trial_test(bignum num){
    bignum i_2;
 
    while( true ){
-     
+
      i_2 = bignum_multiply_fixed(i,i);
-     
+
      res = bignum_divide(num,i);
 
-     
      if( bignum_is_zero( res.reminder ) ){
        bignum_free( res.result );
       bignum_free( res.reminder );
        free( i_2.bignum );
        return false;
      }
-     
+
     bignum_free( res.result );
     bignum_free( res.reminder );
      bignum_print(i_2);
@@ -39,13 +38,13 @@ bool trial_test(bignum num){
 }
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
-  
+
   bignum_subtract(lhs,rhs);
 
   for(int64_t i =0 ; i < lhs.bignum_size; i++)
     if(lhs.bignum[i] != 0)
       return false;
-  
+
   return true;
 }
 
@@ -74,5 +73,5 @@ bool bignum_greater_than(bignum lhs, bignum rhs){
   bignum_subtract(lhs,rhs);
 
 
-  return !bignum_is_negative(lhs);  
+  return !bignum_is_negative(lhs);
 }
