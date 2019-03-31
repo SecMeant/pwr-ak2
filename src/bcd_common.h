@@ -5,7 +5,7 @@
 #include <string.h>
 #define BCD_U8_MASK 0x0f
 #define BCD_CHUNK_SIZE sizeof(uint8_t)
-#define BCD_COMMON_SIZE 25
+#define BCD_COMMON_SIZE 2048
 #define BCD_ERR_ZERO_DIV -11
 
 extern const char * bcd_bignum_example;
