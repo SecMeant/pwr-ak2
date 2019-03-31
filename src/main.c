@@ -244,6 +244,7 @@ void bcd_mul_crop_test()
 	}
 }
 
+
 void bcd_power_test(){
 	bcd_bignum first;
 	first.bignum_size = BCD_POWER_INIT_SIZE;
@@ -258,10 +259,38 @@ void bcd_power_test(){
 	free(res.bignum); 
 }
 
+
+void bcd_div_test()
+{
+  bcd_bignum b1 = bcd_bignum_make(9);
+  bcd_bignum b2 = bcd_bignum_make(4);
+
+  b1.bignum[8] = 0;
+  b1.bignum[7] = 7;
+  b1.bignum[6] = 4;
+  b1.bignum[5] = 5;
+  b1.bignum[4] = 2;
+  b1.bignum[3] = 3;
+  b1.bignum[2] = 2;
+  b1.bignum[1] = 5;
+  b1.bignum[0] = 2;
+
+  b2.bignum[3] = 2;
+  b2.bignum[2] = 3;
+  b2.bignum[1] = 7;
+  b2.bignum[0] = 4;
+
+  bcd_bignum_divide_result res = bcd_bignum_divide(b1, b2);
+  bcd_bignum_print(res.result); // CORRECT: 31391
+  bcd_bignum_print(res.reminder); // CORRECT: 1018
+
+  bcd_bignum_free(b1);
+  bcd_bignum_free(b2);
+  bcd_bignum_free(res.result);
+  bcd_bignum_free(res.reminder);
+}
+
 int main()
 {
-	
-	bcd_power_test();
-
 	return 0;
 }
