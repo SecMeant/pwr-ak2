@@ -68,7 +68,7 @@ bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2){
     carry = quotient;
     // check if addition caused overflow
     if(result.bignum[i] > 9){
-       result.bignum[i] = (result.bignum[i+j]+6) & BCD_U8_MASK;
+       result.bignum[i] = (result.bignum[i]+6) & BCD_U8_MASK;
        carry++;
     }
   }
@@ -129,7 +129,7 @@ void bcd_bignum_mul_fixed_no_return(bcd_bignum b1, bcd_bignum b2, bcd_bignum res
       carry = quotient;
       // check if addition caused overflow
       if(result.bignum[i] > 9){
-         result.bignum[i] = (result.bignum[i+j]+6) & BCD_U8_MASK;
+         result.bignum[i] = (result.bignum[i]+6) & BCD_U8_MASK;
          carry++;
       }
     }

@@ -32,7 +32,6 @@ bool bcd_trial_test(bcd_bignum num){
 	 	
 		bcd_bignum_free( res.result );
 		bcd_bignum_free( res.reminder );
-	 	// bcd_bignum_print(i_2);
 	 	
 	 	if( bcd_bignum_greater_than(i_2, num) ){
 	 		return true;

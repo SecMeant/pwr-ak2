@@ -1,6 +1,6 @@
 CC=gcc
 AS=as
-CFLAGS=-Wall -Wextra -std=c11
+CFLAGS=-Wall -Wextra -std=c11 -ggdb -g3
 ASFLAGS=
 OUTDIR=.
 SRCDIR=./src

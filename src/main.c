@@ -258,6 +258,7 @@ void bcd_power_test(){
   first.bignum[0] = 0x2;
 
   bcd_bignum res = bcd_bignum_power(first,5000);
+  
   for(int i =BCD_COMMON_SIZE-1; i >= 0; i--)
     printf( "%x", res.bignum[i]);
   free(first.bignum);
@@ -316,6 +317,6 @@ void bcd_isPrime(){
 
 int main()
 {
-  bcd_isPrime();
+  bcd_power_test();
   return 0;
 }
