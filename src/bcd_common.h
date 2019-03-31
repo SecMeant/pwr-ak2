@@ -26,6 +26,7 @@ void bcd_bignum_shift_right(bcd_bignum b, int64_t sw);
 bool bcd_bignum_is_zero(bcd_bignum b);
 void bcd_bignum_fatal_error(const char *msg, int64_t errno);
 void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
+bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size);
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1(bcd_bignum b);

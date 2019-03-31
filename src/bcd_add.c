@@ -26,6 +26,7 @@ void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2){
       b1.bignum[i] = (b1.bignum[i] + 6) & BCD_U8_MASK;
       carry = 1;
     }
+    ++i;
   }
 
 }

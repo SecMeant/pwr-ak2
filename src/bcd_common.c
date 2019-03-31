@@ -74,13 +74,18 @@ void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src)
   }
 }
 
+bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size)
+{
+  bcd_bignum ret;
+  ret.bignum_size = b.bignum_size + size;
+  ret.bignum = (uint8_t*)malloc(ret.bignum_size * BCD_CHUNK_SIZE);
+  bcd_bignum_copy(ret, b);
+  return ret;
+}
+
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b)
 {
-	bcd_bignum ret;
-	ret.bignum_size = b.bignum_size * 2;
-	ret.bignum = (uint8_t*)malloc(ret.bignum_size * BCD_CHUNK_SIZE);
-	bcd_bignum_copy(ret, b);
-	return ret;
+  return bcd_bignum_extend(b, b.bignum_size*2);
 }
 
 bool bcd_bignum_is_negative(bcd_bignum b)
@@ -110,14 +115,20 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
     bcd_bignum_fatal_error("Attempted division by 0.",
                             BCD_ERR_ZERO_DIV);
 
+  int64_t shift = bcd_bignum_effective_width(b1) - bcd_bignum_effective_width(b2);
+  const int64_t arg_width = shift+1;
+  bcd_bignum_divide_result ret;
   bcd_bignum result = bcd_bignum_make(b1.bignum_size);
-  bcd_bignum divident = bcd_bignum_extend_twice(b1);
-  bcd_bignum divisor  = bcd_bignum_make(b1.bignum_size *2);
+  bcd_bignum divident = bcd_bignum_extend(b1, arg_width);
+
+  if(shift < 0)
+    goto bcd_bignum_divide_return;
+
+  bcd_bignum divisor = bcd_bignum_extend(b2, arg_width);
   bcd_bignum one = bcd_bignum_make(result.bignum_size);
   one.bignum[0] = 1;
   bcd_bignum_copy(divisor, b2);
 
-  int64_t shift = b1.bignum_size - 1;
   bcd_bignum_shift_left(divisor, shift);
   while(shift >= 0)
   {
@@ -133,12 +144,10 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
     bcd_bignum_shift_right(divisor,1);
   }
 
-  // TODO this reallocs might not be a good idea
-  bcd_bignum_realloc(&divident, divident.bignum_size / 2);
   bcd_bignum_free(divisor);
   bcd_bignum_free(one);
 
-  bcd_bignum_divide_result ret;
+bcd_bignum_divide_return:
   ret.result = result;
   ret.reminder = divident;
   return ret;
