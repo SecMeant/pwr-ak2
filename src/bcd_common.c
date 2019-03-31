@@ -11,11 +11,12 @@ void bcd_bignum_fatal_error(const char *msg, int64_t errno)
 
 void bcd_bignum_shift_left(bcd_bignum b, int64_t sw)
 {
-  int64_t i = b.bignum_size - sw -1;
+  int64_t i = b.bignum_size - sw;
   int64_t j = i + sw;
   while(i >=0)
   {
-    b.bignum[j] = b.bignum[i];
+    if(j < b.bignum_size)
+      b.bignum[j] = b.bignum[i];
     --i;
     --j;
   }
@@ -100,42 +101,32 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
                             BCD_ERR_ZERO_DIV);
 
   bcd_bignum result = bcd_bignum_make(b1.bignum_size);
-  // From now on divident is also current reminder
-  // TODO make functions for creating divident and divisor
-  // from b1 and b2 that extends and properly shifts
   bcd_bignum divident = bcd_bignum_extend_twice(b1);
   bcd_bignum divisor  = bcd_bignum_make(b1.bignum_size *2);
+  bcd_bignum one = bcd_bignum_make(result.bignum_size);
+  one.bignum[0] = 1;
   bcd_bignum_copy(divisor, b2);
 
   int64_t shift = b1.bignum_size - 1;
   bcd_bignum_shift_left(divisor, shift);
   while(shift >= 0)
   {
-    if(bcd_bignum_is_negative(divident))
-      bcd_bignum_add(divident, divisor);
-    else
-      bcd_bignum_sub(divident, divisor);
-
     bcd_bignum_shift_left(result, 1);
-    if(!bcd_bignum_is_negative(divident))
-      bcd_bignum_or_1(result);
-
-    if(bcd_bignum_is_zero(divident))
+    bcd_bignum_sub(divident, divisor);
+    while(!bcd_bignum_is_negative(divident))
     {
-      bcd_bignum_shift_left(result, shift);
-      break;
+      bcd_bignum_add(result, one);
+      bcd_bignum_sub(divident, divisor);
     }
-
-    bcd_bignum_shift_right(divisor, 1);
+    bcd_bignum_add(divident, divisor);
     --shift;
+    bcd_bignum_shift_right(divisor,1);
   }
-
-  if(bcd_bignum_is_negative(divident))
-    bcd_bignum_add(divident, b2);
 
   // TODO this reallocs might not be a good idea
   bcd_bignum_realloc(&divident, divident.bignum_size / 2);
   bcd_bignum_free(divisor);
+  bcd_bignum_free(one);
 
   bcd_bignum_divide_result ret;
   ret.result = result;
@@ -167,7 +158,7 @@ void bcd_bignum_alloc(bcd_bignum *b1, int64_t size)
 bcd_bignum bcd_bignum_make(int64_t size)
 {
   bcd_bignum ret;
-  ret.bignum = (uint8_t*) malloc(size * BCD_CHUNK_SIZE);
+  ret.bignum = (uint8_t*) calloc(BCD_CHUNK_SIZE, size);
   ret.bignum_size = size;
   assert(ret.bignum);
   return ret;
