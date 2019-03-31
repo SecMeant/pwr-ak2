@@ -90,6 +90,26 @@ void bignum_or_1(bignum b1)
   b1.bignum[0] |= 1;
 }
 
+int64_t bignum_effective_width(bignum b)
+{
+  int64_t effective_size = 0;
+  for(int64_t  chunk = b.bignum_size -1; chunk >= 0; --chunk)
+  {
+    if(b.bignum[chunk] == 0)
+      continue;
+
+    effective_size = CHUNK_SIZE_BITS -1;
+    while(effective_size >= 0)
+    {
+      if(b.bignum[chunk] >> effective_size != 0)
+        return effective_size + 64 * chunk + 1;
+      --effective_size;
+    }
+  }
+
+  return 0;
+}
+
 void bignum_shift_chunk_left(bignum a, int64_t sw)
 {
   int64_t index = a.bignum_size - sw - 1;
@@ -131,6 +151,8 @@ void bignum_alloc(bignum *b1, int64_t size)
 
 bignum bignum_make(int64_t size)
 {
+  assert(size >= 0);
+
   bignum ret;
   ret.bignum = (int64_t*) malloc(size * CHUNK_SIZE);
   ret.bignum_size = size;
