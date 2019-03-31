@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdio.h>
 
+const char * bcd_bignum_example = "524287";
+
 void bcd_bignum_fatal_error(const char *msg, int64_t errno)
 {
   fprintf(stderr, "BCD BIGNUM FATAL ERROR! %s\n", msg);
@@ -173,4 +175,66 @@ void bcd_bignum_realloc(bcd_bignum *b, int64_t newsize)
 
   b->bignum_size = newsize;
   assert(b->bignum);
+}
+
+bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
+  
+  bcd_bignum_sub(lhs,rhs);
+
+  for(int64_t i =0 ; i < lhs.bignum_size; i++)
+    if(lhs.bignum[i] != 0)
+      return false;
+  return true;
+}
+
+bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs){
+
+  bcd_bignum_sub(lhs,rhs);
+
+  return bcd_bignum_is_negative(lhs); 
+}
+
+bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs){
+  
+  bcd_bignum_sub(lhs,rhs);
+
+  return !bcd_bignum_is_negative(lhs);  
+}
+void bcd_increment(bcd_bignum b1){
+  int8_t carry = 1; 
+  int64_t i =0;
+
+  while(carry &&  i < b1.bignum_size){
+    b1.bignum[i] += carry;
+    carry =0;
+    if(b1.bignum[i] > 9){
+      b1.bignum[i] = (b1.bignum[i] + 6) & BCD_U8_MASK;
+      carry = 1;
+      i++;
+    }
+  }
+}
+
+void to_bcd_number(const char* number, ENDIANES mode, uint8_t* dst){
+  int64_t i =0;
+  
+  if(mode == LITTLE_ENDIAN){
+    // decode value    
+    while(number[i] != 0){
+      dst[i] = number[i] -'0';
+      i++;
+    }
+
+  }else{  
+    int64_t k =0;
+    // find last value
+    while(number[i] != 0)i++;
+    i--;    
+    // decode value 
+    while(i >= 0){
+      dst[k] = number[i] -'0';
+      k++;
+      i--;
+    }  
+  }
 }

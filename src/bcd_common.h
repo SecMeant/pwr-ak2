@@ -5,8 +5,15 @@
 #include <string.h>
 #define BCD_U8_MASK 0x0f
 #define BCD_CHUNK_SIZE sizeof(uint8_t)
-#define BCD_POWER_INIT_SIZE 2048
+#define BCD_COMMON_SIZE 50
 #define BCD_ERR_ZERO_DIV -11
+
+extern const char * bcd_bignum_example;
+
+typedef enum ENDIANES_{
+  LITTLE_ENDIAN,
+  BIG_ENDIAN
+}ENDIANES;
 
 // we will use unpacked bcd technique
 typedef struct bcd_bignum_
@@ -29,7 +36,7 @@ void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1(bcd_bignum b);
-
+bool bcd_trial_test(bcd_bignum b1);
 // sum first bignum with sencod bignum 
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
@@ -48,12 +55,13 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2);
 
 // make multiplication and save result in allocated memory 
 // which size is as big as size of the larger factor
-// NOTE the result can be cuted 
+// NOTE the result can be cut
 bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2);
 
 bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent);
 
 void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
+void bcd_increment(bcd_bignum b1);
 
 void bcd_bignum_print(bcd_bignum b);
 // bcd memory managment stuff
@@ -63,3 +71,13 @@ void bcd_bignum_alloc(bcd_bignum *b1, int64_t size);
 // realloc memory with given size
 // if area is expaned set additional part of memory to 0
 void bcd_bignum_realloc(bcd_bignum *b1, int64_t newsize);
+
+// convert given number from ascii to N10
+// mode describes the endianes of given number
+// save result in dst table, the result is always little endian
+void to_bcd_number(const char* number, ENDIANES mode, uint8_t* dst);
+
+
+bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs);
+bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs);
+bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs);

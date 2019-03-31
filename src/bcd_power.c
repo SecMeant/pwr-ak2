@@ -2,14 +2,14 @@
 #include <stdlib.h>
 bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent){
 	
-	uint8_t temp[BCD_POWER_INIT_SIZE];
-	memset(temp, 0, BCD_POWER_INIT_SIZE);
+	uint8_t temp[BCD_COMMON_SIZE];
+	memset(temp, 0, BCD_COMMON_SIZE);
 
 	uint8_t* tmp_res = NULL, *tmp_num = NULL;
 	temp[0] = 0x1;
 	// set init value
 	bcd_bignum result;
-	result.bignum_size = BCD_POWER_INIT_SIZE;
+	result.bignum_size = BCD_COMMON_SIZE;
 	result.bignum = temp;
 
 	while( exponent > 0){

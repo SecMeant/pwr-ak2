@@ -252,13 +252,13 @@ void bcd_mul_crop_test()
 
 void bcd_power_test(){
   bcd_bignum first;
-  first.bignum_size = BCD_POWER_INIT_SIZE;
+  first.bignum_size = BCD_COMMON_SIZE;
   first.bignum = (uint8_t*)malloc(sizeof(uint8_t)*first.bignum_size);
-  memset(first.bignum, 0, BCD_POWER_INIT_SIZE);
+  memset(first.bignum, 0, BCD_COMMON_SIZE);
   first.bignum[0] = 0x2;
 
   bcd_bignum res = bcd_bignum_power(first,5000);
-  for(int i =BCD_POWER_INIT_SIZE; i >= 0; i--)
+  for(int i =BCD_COMMON_SIZE-1; i >= 0; i--)
     printf( "%x", res.bignum[i]);
   free(first.bignum);
   free(res.bignum); 
@@ -295,7 +295,27 @@ void bcd_div_test()
   bcd_bignum_free(res.reminder);
 }
 
+void bcd_isPrime(){
+  uint8_t num1[BCD_COMMON_SIZE];
+  memset(num1, 0, BCD_COMMON_SIZE);
+  to_bcd_number(bcd_bignum_example, BIG_ENDIAN, num1);
+
+  for(int i = BCD_COMMON_SIZE-1; i >= 0; i--)
+    printf( "%x", num1[i]);
+  
+  puts("");
+  
+  bcd_bignum b1 = {.bignum = num1, .bignum_size = BCD_COMMON_SIZE};
+
+  bool prime = bcd_trial_test(b1);
+  if( prime )
+    printf("Number is prime\n");
+  else
+    printf("Number is not prime\n");
+}
+
 int main()
 {
+  bcd_isPrime();
   return 0;
 }
