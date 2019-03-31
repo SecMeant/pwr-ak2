@@ -94,6 +94,16 @@ void bcd_bignum_or_1(bcd_bignum b)
   b.bignum[0] |= 1;
 }
 
+int64_t bcd_bignum_effective_width(bcd_bignum b)
+{
+  for(int64_t i = b.bignum_size - 1; i >=0; --i)
+  {
+    if(b.bignum[i] != 0)
+      return i+1;
+  }
+  return 0;
+}
+
 bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
 {
   if(bcd_bignum_is_zero(b2))

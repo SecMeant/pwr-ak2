@@ -29,6 +29,7 @@ void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1(bcd_bignum b);
+int64_t bcd_bignum_effective_width(bcd_bignum b);
 
 // sum first bignum with sencod bignum 
 // and save result in first bignum
