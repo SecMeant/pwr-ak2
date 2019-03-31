@@ -5,6 +5,8 @@
 #include <string.h>
 #define BCD_U8_MASK 0x0f
 #define BCD_CHUNK_SIZE sizeof(uint8_t)
+
+#define BCD_POWER_INIT_SIZE 2048
 // we will use unpacked bcd technique
 typedef struct bcd_bignum_
 {
@@ -38,8 +40,11 @@ bcd_bignum bcd_bignum_mul(bcd_bignum b1, bcd_bignum b2);
 // make multiplication and save result in allocated memory 
 // which size is as big as size of the larger factor
 // NOTE the result can be cuted 
-bcd_bignum bcd_bignum_mul_with_crop(bcd_bignum b1, bcd_bignum b2);
+bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2);
 
+bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent);
+
+void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
 
 void bcd_bignum_print(bcd_bignum b);
 // bcd memory managment stuff

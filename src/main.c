@@ -237,17 +237,31 @@ void bcd_mul_crop_test()
 	}
 	puts("");
 
-	bcd_bignum res = bcd_bignum_mul_with_crop(b1, b2);
+	bcd_bignum res = bcd_bignum_mul_fixed(b1, b2);
 
 	for(int i = 0; i < b1.bignum_size; i++){
 		printf("%x", res.bignum[i]);	
 	}
 }
 
+void bcd_power_test(){
+	bcd_bignum first;
+	first.bignum_size = BCD_POWER_INIT_SIZE;
+	first.bignum = (uint8_t*)malloc(sizeof(uint8_t)*first.bignum_size);
+	memset(first.bignum, 0, BCD_POWER_INIT_SIZE);
+	first.bignum[0] = 0x2;
+	
+	bcd_bignum res = bcd_bignum_power(first,5000);
+	for(int i =BCD_POWER_INIT_SIZE; i >= 0; i--)
+		printf( "%x", res.bignum[i]);
+	free(first.bignum);
+	free(res.bignum); 
+}
+
 int main()
 {
 	
-	bcd_sub_test();
+	bcd_power_test();
 
 	return 0;
 }

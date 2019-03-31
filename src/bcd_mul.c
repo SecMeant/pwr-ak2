@@ -42,7 +42,7 @@ bcd_bignum bcd_bignum_mul(bcd_bignum b1, bcd_bignum b2){
 }
 
 
-bcd_bignum bcd_bignum_mul_with_crop(bcd_bignum b1, bcd_bignum b2){
+bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2){
    
   // this variables hold result of spliting the multiplication process
   int8_t reminder, quotient;
@@ -78,6 +78,8 @@ bcd_bignum bcd_bignum_mul_with_crop(bcd_bignum b1, bcd_bignum b2){
     // prepeand carry to result
     result.bignum[i + j] += carry;
     carry=0;
+    
+    b1.bignum_size--;
   }
   return result;
 }
