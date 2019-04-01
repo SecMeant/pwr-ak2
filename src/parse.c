@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "bignum_common.h"
+#include "bcd_common.h"
 
 ssize_t getline(char **, size_t *, FILE *);
 
@@ -56,9 +57,25 @@ void bignum_hex_atoi
   }
 }
 
+void bcd_bignum_hex_atoi(uint8_t *bcd_bignum, const char *buf, int size)
+{
+  const char *buf_reverse = buf + size - 1;
+  for(int i = 0; i < size; ++i)
+  {
+    int digit = *buf_reverse - '0';
+    --buf_reverse;
+    bcd_bignum[i] = digit;
+  }
+}
+
+static bool is_decimal_digit(char c)
+{
+  return (c >= '0' && c <= '9');
+}
+
 static bool is_hex_digit(char c)
 {
-  if(c >= '0' && c <= '9')
+  if(is_decimal_digit(c))
     return true;
 
   if(c >= 'A' && c <= 'F')
@@ -77,6 +94,19 @@ static bool bignum_verify_ascii(const char *buffer, size_t size)
   while(size != 0)
   {
     if(!is_hex_digit(buffer[size]))
+      return false;
+
+    --size;
+  }
+  return true;
+}
+
+static bool bcd_bignum_verify_ascii(const char *buffer, size_t size)
+{
+  --size;
+  while(size != 0)
+  {
+    if(!is_decimal_digit(buffer[size]))
       return false;
 
     --size;
@@ -107,4 +137,25 @@ bignum bignum_load(FILE *file)
   return ret;
 }
 
+bcd_bignum bcd_bignum_load(FILE *file)
+{
+  assert(file);
 
+  char *number_ascii = NULL;
+  size_t number_size = 0;
+  bcd_bignum ret = {NULL, 0};
+
+  number_size = getline(&number_ascii, &number_size, file) - 1;
+  if(!bcd_bignum_verify_ascii(number_ascii, number_size))
+  {
+    puts("NOT GOOD NUMBER");
+    goto bcd_bignum_parse_cleanup;
+  }
+
+  ret = bcd_bignum_make(number_size);
+  bcd_bignum_hex_atoi(ret.bignum, number_ascii, number_size);
+
+  bcd_bignum_parse_cleanup:
+  free(number_ascii);
+  return ret;
+}

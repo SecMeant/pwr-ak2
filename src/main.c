@@ -151,6 +151,23 @@ void div_test()
   fclose(f);
 }
 
+void bcd_div_test2()
+{
+  FILE *f = fopen("bignums.txt", "rb");
+  bcd_bignum b1 = bcd_bignum_load(f);
+  bcd_bignum b2 = bcd_bignum_load(f);
+  bcd_bignum_print(b1);
+  bcd_bignum_print(b2);
+  bcd_bignum_divide_result res = bcd_bignum_divide(b1,b2);
+  bcd_bignum_print(res.result);
+  bcd_bignum_print(res.reminder);
+  bcd_bignum_free(res.reminder);
+  bcd_bignum_free(res.result);
+  bcd_bignum_free(b1);
+  bcd_bignum_free(b2);
+  fclose(f);
+}
+
 void bcd_add_test()
 {
   bcd_bignum b1 = bcd_bignum_make(6);
