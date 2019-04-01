@@ -25,14 +25,17 @@ bignum_copy:
 
     decq %r8
     jns bignum_copy_copyloop
-  
+
+  cmp %rcx, %rsi
+  jl bignum_copy_end
+
   bignum_copy_zeroextend_loop:
     # if two indexes meet, exit
     # TODO check if this work if rsi has smaller value
     # ie first argument is smaller
     cmp %rcx, %rsi
     jz bignum_copy_end
-  
+
     decq %rsi
     movq $0,(%rdi, %rsi, CHUNK_SIZE)
     jmp bignum_copy_zeroextend_loop

@@ -13,6 +13,8 @@
 
 #define ERR_ZERO_DIV -11
 
+#define BIGNUM_MAX_STACK_ALLOC_SIZE 20
+
 typedef struct bignum_
 {
   int64_t *bignum;
@@ -51,9 +53,11 @@ void bignum_copy(bignum b1, bignum b2);
 
 bignum bignum_power(bignum num, int exponent);
 bignum bignum_extend_twice(bignum b1);
-void bignum_or_1(); // inserts 1 to lsb. (used when dividing)
+bignum bignum_extend(bignum b, int64_t size);
+void bignum_or_1(bignum b); // inserts 1 to lsb. (used when dividing)
 
 int64_t bignum_effective_width(bignum b);
+int64_t bignum_bit_size_to_chunks(int64_t bitsize);
 
 void bignum_free(bignum b);
 bignum bignum_make(int64_t size);

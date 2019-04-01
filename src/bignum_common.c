@@ -83,6 +83,15 @@ bignum bignum_extend_twice(bignum b1)
   return ret;
 }
 
+bignum bignum_extend(bignum b, int64_t size)
+{
+  bignum ret;
+  ret.bignum_size = b.bignum_size + size;
+  ret.bignum = (int64_t*)calloc(CHUNK_SIZE, ret.bignum_size);
+  bignum_copy(ret, b);
+  return ret;
+}
+
 void bignum_or_1(bignum b1)
 {
   if(b1.bignum_size == 0)
@@ -110,6 +119,13 @@ int64_t bignum_effective_width(bignum b)
   return 0;
 }
 
+int64_t bignum_bit_size_to_chunks(int64_t bitsize)
+{
+  int64_t ret = bitsize / CHUNK_SIZE_BITS;
+  if(bitsize % CHUNK_SIZE_BITS) ret += 1;
+  return ret;
+}
+
 void bignum_shift_chunk_left(bignum a, int64_t sw)
 {
   int64_t index = a.bignum_size - sw - 1;
@@ -122,7 +138,7 @@ void bignum_shift_chunk_left(bignum a, int64_t sw)
     {
       a.bignum[index+sw] = chunk;
     }
-      
+
     --index;
   }
 }
@@ -154,7 +170,7 @@ bignum bignum_make(int64_t size)
   assert(size >= 0);
 
   bignum ret;
-  ret.bignum = (int64_t*) malloc(size * CHUNK_SIZE);
+  ret.bignum = (int64_t*) calloc(CHUNK_SIZE, size);
   ret.bignum_size = size;
   assert(ret.bignum);
   return ret;

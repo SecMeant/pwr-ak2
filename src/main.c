@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "bignum_common.h"
 #include "bcd_common.h"
+#include "parse.h"
 void shift_test()
 {
   int64_t num1[] = {0,0,3,0};
@@ -133,23 +134,22 @@ void isPrime(){
 
 }
 
-bignum_divide_result div_test()
+void div_test()
 {
-  int64_t num1[8] = {0xffffffffffffffff, 0xffffffffffffffff,
-                     0xffffffffffffffff, 0xffffffffffffffff,
-                     0xffffffffffffffff, 0xffffffffffffffff,
-                     0xffffffffffffffff, 0xff};
-  int64_t num2[8] = {0xffffffffffffffff, 0xffffffffffffffff,
-                     0xffffffffffffffff, 0xffffffffffffffff,
-                     0xffffffffffffffff, 0xffffffffffffffff,
-                     0x7fffffffffffffff, 0x0};
-
-  bignum b1 = {.bignum = num1, .bignum_size = 8};
-  bignum b2 = {.bignum = num2, .bignum_size = 8};
-  return bignum_divide(b1,b2);
+  FILE *f = fopen("bignums.txt", "rb");
+  bignum b1 = bignum_load(f);
+  bignum b2 = bignum_load(f);
+  bignum_print(b1);
+  bignum_print(b2);
+  bignum_divide_result res = bignum_divide(b1,b2);
+  bignum_print(res.result);
+  bignum_print(res.reminder);
+  bignum_free(res.reminder);
+  bignum_free(res.result);
+  bignum_free(b1);
+  bignum_free(b2);
+  fclose(f);
 }
-
-
 
 void bcd_add_test()
 {

@@ -128,6 +128,7 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
 
   bcd_bignum divisor = bcd_bignum_extend(b2, arg_width);
   bcd_bignum one = bcd_bignum_make(result.bignum_size);
+  // TODO(holz) make bcd_bignum_increment
   one.bignum[0] = 1;
   bcd_bignum_copy(divisor, b2);
 
