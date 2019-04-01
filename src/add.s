@@ -27,7 +27,9 @@ bignum_add:
   jle add_bignum_end
 
   # here carry must have existed on last add and b1.size > b2.size
-  movq %r9, %r8
+  # calculate num of chunks to propagate over b1.size - current_index
+  subq %r9, %rsi
+  movq %rsi, %r8
   # now r9 has index of first chunk from which
   # carry propagation should continue
   # r8 has loop count
