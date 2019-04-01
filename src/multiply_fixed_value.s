@@ -34,7 +34,7 @@ bignum_multiply_fixed_no_malloc:
   movq $0, %rdi
   
   # expand first loop to init argument
-bignum_multiply_init_result:
+bignum_multiply_fixed_no_malloc_init_result:
   # move first chunk to multiply
   movq (%rdi), %rax; 
   mulq (%rdx, %r12, CHUNK_SIZE)
@@ -45,13 +45,13 @@ bignum_multiply_init_result:
   # save new carry
   movq %rdx, %rdi
 
-  jno bignum_multiply_no_carry
+  jno bignum_multiply_fixed_no_malloc_no_carry
   incq %rdi # carry++
-bignum_multiply_no_carry:
+bignum_multiply_fixed_no_malloc_no_carry:
   
   incq %r12
   cmpq %r12, %rsi
-  jg bignum_multiply_init_result
+  jg bignum_multiply_fixed_no_malloc_init_result
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
@@ -59,10 +59,10 @@ bignum_multiply_no_carry:
   decq %rsi
 
 # multiply rest of the number
-bignum_multiply_outter_loop: 
+bignum_multiply_fixed_no_malloc_outter_loop: 
   # i = j 
   movq %r13, %r12
-  bignum_multiply_inner_loop:
+  bignum_multiply_fixed_no_malloc_inner_loop:
 
     movq (%rdi, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%rdx, %r12, CHUNK_SIZE)        # get chunk from second bignum
@@ -72,13 +72,13 @@ bignum_multiply_outter_loop:
     addq %rdi, (%r8, %r12,CHUNK_SIZE ) 
     movq %rdx, %rdi
 
-    jno bignum_multiply_no_carry_2
+    jno bignum_multiply_fixed_no_malloc_no_carry_2
     incq %rdi # carry++
-  bignum_multiply_no_carry_2:
+  bignum_multiply_fixed_no_malloc_no_carry_2:
     
     incq %r12
     cmpq %r12, %rsi
-    jg bignum_multiply_inner_loop
+    jg bignum_multiply_fixed_no_malloc_inner_loop
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
@@ -87,7 +87,7 @@ bignum_multiply_outter_loop:
   incq %r13
   decq %rsi
   cmpq %r13, %rcx
-  jg bignum_multiply_outter_loop
+  jg bignum_multiply_fixed_no_malloc_outter_loop
 
    # prepare result for return 
   movq 8(%rsp), %rax
