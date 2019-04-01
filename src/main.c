@@ -61,16 +61,16 @@ void multiply_test(){
   first.bignum_size = 4;
   first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
   first.bignum[0] = 0xfffffffffffffffe;
-  first.bignum[1] = 0xffffffffffffffff;
-  first.bignum[2] = 0xffffffffffffffff;
-  first.bignum[3] = 0xffffffffffffffff;
+  first.bignum[1] = 0x0;
+  first.bignum[2] = 0x0;
+  first.bignum[3] = 0x0;
 
   second.bignum_size = 4;
   second.bignum = (int64_t*)malloc(sizeof(uint64_t)*second.bignum_size);
   second.bignum[0] = 0xfffffffffffffffd;
   second.bignum[1] = 0xffffffffffffffff;
-  second.bignum[2] = 0xffffffffffffffff;
-  second.bignum[3] = 0xffffffffffffffff;
+  second.bignum[2] = 0x0;
+  second.bignum[3] = 0x0;
 
   bignum res = bignum_multiply_fixed(first,second);
   for(int i =0; i < 4; i++)
@@ -317,6 +317,6 @@ void bcd_isPrime(){
 
 int main()
 {
-  bcd_power_test();
+  multiply_test();
   return 0;
 }
