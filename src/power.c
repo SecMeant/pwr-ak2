@@ -1,10 +1,13 @@
 #include "bignum_common.h"
 #include <stdio.h>
+#include <string.h>
 bignum bignum_power(bignum num, int exponent){
   
-  int64_t temp[BIGNUM_COMMON_SIZE] = {0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0};
+  int64_t temp[BIGNUM_COMMON_SIZE];
+  memset(temp,0,BIGNUM_COMMON_SIZE*sizeof(int64_t));
+  temp[0] = 0x1;
   int64_t* tmp_res = NULL, *tmp_num = NULL;
-  
+  int i=0;
   // set init value
   bignum result;
   result.bignum_size = BIGNUM_COMMON_SIZE;
@@ -22,6 +25,8 @@ bignum bignum_power(bignum num, int exponent){
     exponent = exponent>>1;
 
     num = bignum_multiply_fixed(num,num);
+    bignum_print(result);
+    puts("");
     if(tmp_num != NULL)
       free(tmp_num);
     tmp_num = num.bignum;

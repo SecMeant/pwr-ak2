@@ -59,7 +59,7 @@ bignum_multiply_fixed:
   movq 40(%rsp), %rcx  # restore rcx
   # save allocated memory pointer on stack
   movq %rax, 8(%rsp)
-  # result = malloc(sizof(uint64_t) * bi_bignum_size)
+  # result = malloc(sizof(uint64_t) * b1_bignum_size)
   movq %rax, %r15
   # int i = 0 
   movq $0, %r12
@@ -95,16 +95,20 @@ bignum_multiply_no_carry:
 
 # multiply rest of the number
 bignum_multiply_outter_loop: 
-  # i = j 
-  movq %r13, %r12
+  # i = 0
+  movq $0, %r12
+  movq %r13, %r14
+  cmpq $0,%rsi
+  jz bignum_multiply_finish
+
   bignum_multiply_inner_loop:
 
     movq (%r8, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
     # add result  
-    addq %rax, (%r15, %r12,CHUNK_SIZE )
+    addq %rax, (%r15, %r14,CHUNK_SIZE )
     # add carry
-    addq %rdi, (%r15, %r12,CHUNK_SIZE ) 
+    addq %rdi, (%r15, %r14,CHUNK_SIZE ) 
     movq %rdx, %rdi
 
     jno bignum_multiply_no_carry_2
@@ -112,6 +116,7 @@ bignum_multiply_outter_loop:
   bignum_multiply_no_carry_2:
     
     incq %r12
+    incq %r14
     cmpq %r12, %rsi
     jg bignum_multiply_inner_loop
   # prepand carry
@@ -124,6 +129,7 @@ bignum_multiply_outter_loop:
   cmpq %r13, %rcx
   jg bignum_multiply_outter_loop
 
+bignum_multiply_finish:
    # prepare result for return 
   movq 8(%rsp), %rax
   movq 24(%rsp), %rdx

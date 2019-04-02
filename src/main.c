@@ -72,7 +72,14 @@ void multiply_test(){
   second.bignum[2] = 0x0;
   second.bignum[3] = 0x0;
 
-  bignum res = bignum_multiply_fixed(first,second);
+  bignum res;
+  res.bignum_size = 4;
+  res.bignum = (int64_t*)malloc(sizeof(uint64_t)*res.bignum_size);
+  res.bignum[0] = 0x0;
+  res.bignum[1] = 0x0;
+  res.bignum[2] = 0x0;
+  res.bignum[3] = 0x0;
+  bignum_multiply_fixed_no_malloc(first,second, res);
   for(int i =0; i < 4; i++)
     printf( "%lx\n", (uint64_t)res.bignum[i] );
   free (first.bignum);
@@ -85,21 +92,16 @@ void power_test(){
   bignum first;
   first.bignum_size = BIGNUM_COMMON_SIZE;
   first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
-  first.bignum[0] = 0x2;
-  first.bignum[1] = 0x0;
-  first.bignum[2] = 0x0;
-  first.bignum[3] = 0x0;
-  first.bignum[4] = 0x0;
-  first.bignum[5] = 0x0;
-  first.bignum[6] = 0x0;
-  first.bignum[7] = 0x0;
-
-  bignum res = bignum_power(first,256);
-  for(int i =0; i < BIGNUM_COMMON_SIZE; i++)
-    printf( "%lx\n", (uint64_t)res.bignum[i] );
-
+  memset(first.bignum,0,BIGNUM_COMMON_SIZE*sizeof(int64_t));
+  first.bignum[0] = 0x12;
+  // for(int i =0; i < 100; i++){
+  //   first = bignum_multiply_fixed(first,first);
+  //   bignum_print(first);
+  // }
+  bignum res = bignum_power(first,234);
+  bignum_print(res);
   free(first.bignum);
-  free(res.bignum);
+  // free(res.bignum);
 
 
 }
@@ -107,20 +109,28 @@ void bignum_increment_test(){
   bignum first;
   first.bignum_size = 3;
   first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
-  first.bignum[0] = 0xffffffffffffffff;
-  first.bignum[1] = 0xffffffffffffffff;
+  first.bignum[0] = 0x0;
+  first.bignum[1] = 0x0;
   first.bignum[2] = 0x0;
-  for (int i = 0; i < 100; ++i)
+  uint64_t k =0;
+  for (uint64_t i = 0; i < 0xfffffffffffffffe; ++i)
+  {
+    bignum_increment(first);
+    if(i == 0xffffffff*k){
+      bignum_print(first);
+      k++;
+    }    
+  }
+  for (uint64_t i = 0; i < 0xfffffffffffffffe; ++i)
   {
     bignum_increment(first);
     bignum_print(first);    
   }
   free(first.bignum);
-
 }
 
 void isPrime(){
-  int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll, 0x0};
+  int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll };
 
   bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
 
@@ -317,6 +327,5 @@ void bcd_isPrime(){
 
 int main()
 {
-  multiply_test();
   return 0;
 }
