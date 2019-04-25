@@ -60,17 +60,17 @@ void multiply_test(){
   bignum first, second;
   first.bignum_size = 4;
   first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
-  first.bignum[0] = 0xfffffffffffffffe;
+  first.bignum[0] = 0x100000000;
   first.bignum[1] = 0x0;
   first.bignum[2] = 0x0;
   first.bignum[3] = 0x0;
 
   second.bignum_size = 4;
   second.bignum = (int64_t*)malloc(sizeof(uint64_t)*second.bignum_size);
-  second.bignum[0] = 0xfffffffffffffffd;
-  second.bignum[1] = 0xffffffffffffffff;
-  second.bignum[2] = 0x0;
-  second.bignum[3] = 0x0;
+  second.bignum[0] = 0x2;
+  second.bignum[1] = 0x2;
+  second.bignum[2] = 0x2;
+  second.bignum[3] = 0x2;
 
   bignum res;
   res.bignum_size = 4;
@@ -79,9 +79,11 @@ void multiply_test(){
   res.bignum[1] = 0x0;
   res.bignum[2] = 0x0;
   res.bignum[3] = 0x0;
-  bignum_multiply_fixed_no_malloc(first,second, res);
+  // bignum_multiply_fixed_no_malloc(first,first,res);
+  res = bignum_multiply_fixed(first,first);
   for(int i =0; i < 4; i++)
     printf( "%lx\n", (uint64_t)res.bignum[i] );
+  
   free (first.bignum);
   free (second.bignum);
   free (res.bignum);
@@ -98,13 +100,13 @@ void power_test(){
   //   first = bignum_multiply_fixed(first,first);
   //   bignum_print(first);
   // }
-  bignum res = bignum_power(first,234);
+  bignum res = bignum_power(first,123);
   bignum_print(res);
   free(first.bignum);
   // free(res.bignum);
 
-
 }
+
 void bignum_increment_test(){
   bignum first;
   first.bignum_size = 3;
@@ -327,5 +329,6 @@ void bcd_isPrime(){
 
 int main()
 {
+  power_test();
   return 0;
 }

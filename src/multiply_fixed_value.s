@@ -1,9 +1,6 @@
 .extern malloc
 
 CHUNK_SIZE = 8
-INT64_MAX = 0x7FFFFFFFFFFFFFFF
-FIRST_VALUE_SIGN_MASK = 0x1
-SECOND_VALUE_SIGN_MASK = 0x2
 
 .text
 .global bignum_multiply_fixed_no_malloc
@@ -52,7 +49,7 @@ bignum_multiply_no_malloc_init_result:
   # save new carry
   movq %rdx, %rdi
 
-  jno bignum_multiply_no_malloc_no_carry
+  jnc bignum_multiply_no_malloc_no_carry
   incq %rdi # carry++
 bignum_multiply_no_malloc_no_carry:
   
@@ -65,37 +62,48 @@ bignum_multiply_no_malloc_no_carry:
   movq $0, %rdi 
   decq %rsi
 
+
 # multiply rest of the number
 bignum_multiply_no_malloc_outter_loop: 
-  # i = j 
-  movq %r13, %r12
+  # i = 0 
+  movq $0, %r12
+  # just to place result from current multiplication
+  # on right place
+  # tmp = j
+  movq %r13, %r14
+  cmpq $0, %rsi
+  jbe bignum_multiply_no_malloc_finish
+
   bignum_multiply_no_malloc_inner_loop:
 
     movq (%r15, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
     # add result  
-    addq %rax, (%r8, %r12,CHUNK_SIZE )
+    addq %rax, (%r8, %r14,CHUNK_SIZE )
+    jnc bignum_multiply_no_malloc_no_carry_2
+    incq %rdx # carry++
+  bignum_multiply_no_malloc_no_carry_2:
     # add carry
-    addq %rdi, (%r8, %r12,CHUNK_SIZE ) 
+    addq %rdi, (%r8, %r14,CHUNK_SIZE ) 
     movq %rdx, %rdi
 
-    jno bignum_multiply_no_malloc_no_carry_2
+    jnc bignum_multiply_no_malloc_no_carry_3
     incq %rdi # carry++
-  bignum_multiply_no_malloc_no_carry_2:
-    
+  bignum_multiply_no_malloc_no_carry_3:
+    incq %r14
     incq %r12
     cmpq %r12, %rsi
     jg bignum_multiply_no_malloc_inner_loop
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
-  movq $0, %rdi  
+  movq $0, %rdi
 
   incq %r13
   decq %rsi
-  cmpq %r13, %rcx
-  jg bignum_multiply_no_malloc_outter_loop
+  jmp bignum_multiply_no_malloc_outter_loop
 
+bignum_multiply_no_malloc_finish:
   pop %r15
   pop %r14
   pop %r13
