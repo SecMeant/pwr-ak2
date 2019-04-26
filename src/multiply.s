@@ -24,14 +24,12 @@ bignum_multiply_precise:
 
   movq %rdi, %r15
   movq %rdx, %r10
-  
   # int i = 0
   movq $0, %r12
   # int j = 1
   movq $0, %r13
   # carry = 0
   movq $0, %rdi
-  
 
 # multiply rest of the number
 bignum_multiply_precise_outter_loop: 

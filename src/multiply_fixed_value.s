@@ -64,7 +64,7 @@ bignum_multiply_fixed:
   movq $1, %r13
   # carry = 0
   movq $0, %rdi
-  
+
   # expand first loop to init argument
 bignum_multiply_fixed_init_result:
   # move first chunk to multiply
@@ -81,7 +81,7 @@ bignum_multiply_fixed_init_result:
   jnc bignum_multiply_fixed_no_carry
   incq %rdi # carry++
 bignum_multiply_fixed_no_carry:
-  
+
   incq %r12
   cmpq %r12, %rsi
   jg bignum_multiply_fixed_init_result
@@ -89,7 +89,7 @@ bignum_multiply_fixed_no_carry:
   # prepand carry
   addq %rdi, (%r15, %r12,CHUNK_SIZE )
   # reset carry
-  movq $0, %rdi 
+  movq $0, %rdi
   decq %rsi
  
 

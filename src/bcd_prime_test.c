@@ -10,14 +10,14 @@ bool bcd_trial_test(bcd_bignum num){
 
   memset(counter_array, 0 , BCD_COMMON_SIZE);
   memset(i_2_array, 0, BCD_COMMON_SIZE);
-  
+
   counter_array[0]= 0x2;
 
   i.bignum_size = BCD_COMMON_SIZE;
   i.bignum = counter_array;
   i_2.bignum_size = BCD_COMMON_SIZE;
   i_2.bignum = i_2_array;
-  
+
 
 	 while( true ){
 	 	bcd_bignum_mul_fixed_no_return(i,i,i_2);

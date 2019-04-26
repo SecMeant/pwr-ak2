@@ -28,10 +28,10 @@ bool trial_test(bignum num){
     bignum_free( res.reminder );
     bignum_print(i_2);
      if( bignum_greater_than(i_2, num) ){
-       return true; 
+       return true;
      }
 
-     bignum_increment(i);  
+     bignum_increment(i);
    }
 
 }

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 bignum bignum_power(bignum num, int exponent){
-  
+
   int64_t temp[BIGNUM_COMMON_SIZE];
   memset(temp,0,BIGNUM_COMMON_SIZE*sizeof(int64_t));
   temp[0] = 0x1;
@@ -14,7 +14,7 @@ bignum bignum_power(bignum num, int exponent){
   result.bignum = temp;
 
   while( exponent > 0){
-    
+
     if(exponent & 1){
       result = bignum_multiply_fixed(result,num);
       if(tmp_res != NULL)
@@ -22,7 +22,7 @@ bignum bignum_power(bignum num, int exponent){
       tmp_res = result.bignum;
     }
     exponent = exponent>>1;
-   
+
     num = bignum_multiply_fixed(num,num);
     if(tmp_num != NULL)
       free(tmp_num);

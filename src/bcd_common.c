@@ -198,7 +198,7 @@ void bcd_bignum_realloc(bcd_bignum *b, int64_t newsize)
 }
 
 bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
-  
+
   bcd_bignum_sub(lhs,rhs);
 
   for(int64_t i =0 ; i < lhs.bignum_size; i++)
@@ -211,17 +211,17 @@ bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs){
 
   bcd_bignum_sub(lhs,rhs);
 
-  return bcd_bignum_is_negative(lhs); 
+  return bcd_bignum_is_negative(lhs);
 }
 
 bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs){
-  
+
   bcd_bignum_sub(lhs,rhs);
 
-  return !bcd_bignum_is_negative(lhs);  
+  return !bcd_bignum_is_negative(lhs);
 }
 void bcd_increment(bcd_bignum b1){
-  int8_t carry = 1; 
+  int8_t carry = 1;
   int64_t i =0;
 
   while(carry &&  i < b1.bignum_size){
@@ -237,24 +237,24 @@ void bcd_increment(bcd_bignum b1){
 
 void to_bcd_number(const char* number, ENDIANES mode, uint8_t* dst){
   int64_t i =0;
-  
+
   if(mode == LITTLE_ENDIAN){
-    // decode value    
+    // decode value
     while(number[i] != 0){
       dst[i] = number[i] -'0';
       i++;
     }
 
-  }else{  
+  }else{
     int64_t k =0;
     // find last value
     while(number[i] != 0)i++;
-    i--;    
-    // decode value 
+    i--;
+    // decode value
     while(i >= 0){
       dst[k] = number[i] -'0';
       k++;
       i--;
-    }  
+    }
   }
 }
