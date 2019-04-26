@@ -25,47 +25,47 @@ bignum_multiply_fixed_no_malloc:
 
   movq %rdi, %r15
   movq %rdx, %r10
-  
+
   cmpq %rsi, %r9
-  cmovsq %r9, %rsi 
+  cmovsq %r9, %rsi
   # save allocated memory pointer on stack
   movq %rax, 8(%rsp)
-  # int i = 0 
+  # int i = 0
   movq $0, %r12
   # int j = 1
   movq $1, %r13
   # carry = 0
   movq $0, %rdi
-  
+
   # expand first loop to init argument
 bignum_multiply_no_malloc_init_result:
   # move first chunk to multiply
-  movq (%r15), %rax; 
+  movq (%r15), %rax;
   mulq (%r10, %r12, CHUNK_SIZE)
-  # init result 
+  # init result
   movq %rax, (%r8, %r12,CHUNK_SIZE )
   # add carry from previous multiplication
-  addq %rdi, (%r8, %r12,CHUNK_SIZE ) 
+  addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # save new carry
   movq %rdx, %rdi
 
   jnc bignum_multiply_no_malloc_no_carry
   incq %rdi # carry++
 bignum_multiply_no_malloc_no_carry:
-  
+
   incq %r12
   cmpq %r12, %rsi
   jg bignum_multiply_no_malloc_init_result
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
-  movq $0, %rdi 
+  movq $0, %rdi
   decq %rsi
 
 
 # multiply rest of the number
-bignum_multiply_no_malloc_outter_loop: 
-  # i = 0 
+bignum_multiply_no_malloc_outter_loop:
+  # i = 0
   movq $0, %r12
   # just to place result from current multiplication
   # on right place
@@ -78,13 +78,13 @@ bignum_multiply_no_malloc_outter_loop:
 
     movq (%r15, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
-    # add result  
+    # add result
     addq %rax, (%r8, %r14,CHUNK_SIZE )
     jnc bignum_multiply_no_malloc_no_carry_2
     incq %rdx # carry++
   bignum_multiply_no_malloc_no_carry_2:
     # add carry
-    addq %rdi, (%r8, %r14,CHUNK_SIZE ) 
+    addq %rdi, (%r8, %r14,CHUNK_SIZE )
     movq %rdx, %rdi
 
     jnc bignum_multiply_no_malloc_no_carry_3

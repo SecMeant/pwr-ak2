@@ -11,7 +11,7 @@ def isPrime(num):
       return i_2
     i+=1
 
-  
+
 
 
 k = isPrime( 2305843009213693951 )

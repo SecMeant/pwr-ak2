@@ -123,12 +123,12 @@ void bignum_increment_test(){
     if(i == 0xffffffff*k){
       bignum_print(first);
       k++;
-    }    
+    }
   }
   for (uint64_t i = 0; i < 0xfffffffffffffffe; ++i)
   {
     bignum_increment(first);
-    bignum_print(first);    
+    bignum_print(first);
   }
   free(first.bignum);
 }
@@ -197,13 +197,13 @@ void bcd_add_test()
   memcpy(b2.bignum, num2_static, b2.bignum_size);
 
   for(int i =0; i < 8; i++){
-    printf("%x",b1.bignum[i] );  
+    printf("%x",b1.bignum[i] );
   }
   puts("");
   bcd_bignum_add(b1, b2);
 
   for(int i =0; i < 9; i++){
-    printf("%x",b1.bignum[i] );  
+    printf("%x",b1.bignum[i] );
   }
 }
 
@@ -219,13 +219,13 @@ void bcd_sub_test()
   memcpy(b2.bignum, num1_static, b2.bignum_size);
 
   for(int i =0; i < 8; i++){
-    printf("%x",b1.bignum[i] );  
+    printf("%x",b1.bignum[i] );
   }
   puts("");
   bcd_bignum_sub(b1, b2);
 
   for(int i =0; i < 9; i++){
-    printf("%x",b1.bignum[i] );  
+    printf("%x",b1.bignum[i] );
   }
 }
 
@@ -241,19 +241,19 @@ void bcd_mul_test()
   memcpy(b2.bignum, num1_static, b2.bignum_size);
 
   for(int i =0; i < 9; i++){
-    printf("%x",b1.bignum[i] );  
+    printf("%x",b1.bignum[i] );
   }
   puts("");
 
   for(int i =0; i < 6; i++){
-    printf("%x",b2.bignum[i] );  
+    printf("%x",b2.bignum[i] );
   }
   puts("");
 
   bcd_bignum res =bcd_bignum_mul(b1, b2);
 
   for(int i =0; i < b1.bignum_size + b2.bignum_size; i++){
-    printf("%x",res.bignum[i] );  
+    printf("%x",res.bignum[i] );
   }
 }
 
@@ -280,7 +280,7 @@ void bcd_mul_crop_test()
   bcd_bignum res = bcd_bignum_mul_fixed(b1, b2);
 
   for(int i = 0; i < b1.bignum_size; i++){
-    printf("%x", res.bignum[i]);  
+    printf("%x", res.bignum[i]);
   }
 }
 
@@ -293,11 +293,11 @@ void bcd_power_test(){
   first.bignum[0] = 0x2;
 
   bcd_bignum res = bcd_bignum_power(first,5000);
-  
+
   for(int i =BCD_COMMON_SIZE-1; i >= 0; i--)
     printf( "%x", res.bignum[i]);
   free(first.bignum);
-  free(res.bignum); 
+  free(res.bignum);
 }
 
 
@@ -331,9 +331,9 @@ void bcd_isPrime(){
 
   for(int i = BCD_COMMON_SIZE-1; i >= 0; i--)
     printf( "%x", num1[i]);
-  
+
   puts("");
-  
+
   bcd_bignum b1 = {.bignum = num1, .bignum_size = BCD_COMMON_SIZE};
 
   bool prime = bcd_trial_test(b1);

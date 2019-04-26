@@ -36,17 +36,17 @@ bignum_multiply_fixed:
   # allocate memory on stack
   subq $48, %rsp
   # save registrs
-  movq %rdi, 16(%rsp) 
+  movq %rdi, 16(%rsp)
   movq %rsi, 24(%rsp)
   movq %rdx, 32(%rsp)
   movq %rcx, 40(%rsp)
 
-  # calculate proper size for multiplication result 
+  # calculate proper size for multiplication result
   movq %rsi, %rax
-  # allocate new space for result   
+  # allocate new space for result
   movq $8, %rbx
   mulq %rbx
-  # allocate memory for result 
+  # allocate memory for result
   movq %rax, %rdi
   call malloc
   # restore registrs
@@ -58,30 +58,30 @@ bignum_multiply_fixed:
   movq %rax, 8(%rsp)
   # result = malloc(sizof(uint64_t) * b1_bignum_size)
   movq %rax, %r15
-  # int i = 0 
+  # int i = 0
   movq $0, %r12
   # int j = 1
   movq $1, %r13
   # carry = 0
   movq $0, %rdi
-  
+
   # expand first loop to init argument
 bignum_multiply_init_result:
   # move first chunk to multiply
-  movq (%r8), %rax 
+  movq (%r8), %rax
   mulq (%r10, %r12, CHUNK_SIZE)
-  # init result 
+  # init result
   movq %rax, (%r15, %r12,CHUNK_SIZE )
 
   # add carry from previous multiplication
-  addq %rdi, (%r15, %r12,CHUNK_SIZE ) 
+  addq %rdi, (%r15, %r12,CHUNK_SIZE )
   # save new carry
   movq %rdx, %rdi
 
   jnc bignum_multiply_no_carry
   incq %rdi # carry++
 bignum_multiply_no_carry:
-  
+
   incq %r12
   cmpq %r12, %rsi
   jg bignum_multiply_init_result
@@ -89,12 +89,12 @@ bignum_multiply_no_carry:
   # prepand carry
   addq %rdi, (%r15, %r12,CHUNK_SIZE )
   # reset carry
-  movq $0, %rdi 
+  movq $0, %rdi
   decq %rsi
- 
+
 
 # multiply rest of the number
-bignum_multiply_outter_loop: 
+bignum_multiply_outter_loop:
   # i = 0
   movq $0, %r12
   # just to place result from current multiplication
@@ -108,18 +108,18 @@ bignum_multiply_outter_loop:
 
     movq (%r8, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
-    # add result  
+    # add result
     addq %rax, (%r15, %r14,CHUNK_SIZE )
     jnc bignum_multiply_no_carry_3
     incq %rdx # carry++
   bignum_multiply_no_carry_3:
     # add carry
-    addq %rdi, (%r15, %r14,CHUNK_SIZE ) 
+    addq %rdi, (%r15, %r14,CHUNK_SIZE )
     movq %rdx, %rdi
 
     jnc bignum_multiply_no_carry_4
     incq %rdi # carry++
-  bignum_multiply_no_carry_4:   
+  bignum_multiply_no_carry_4:
     incq %r12
     incq %r14
     cmpq %r12, %rsi
@@ -127,17 +127,17 @@ bignum_multiply_outter_loop:
   # prepand carry
   addq %rdi, (%r15, %r12,CHUNK_SIZE )
   # reset carry
-  movq $0, %rdi  
+  movq $0, %rdi
 
   incq %r13
   decq %rsi
   jmp bignum_multiply_outter_loop
 
 bignum_multiply_finish:
-   # prepare result for return 
+   # prepare result for return
   movq 8(%rsp), %rax
   movq 24(%rsp), %rdx
-  # restore stack and return    
+  # restore stack and return
   addq $48, %rsp
   pop %r15
   pop %r14

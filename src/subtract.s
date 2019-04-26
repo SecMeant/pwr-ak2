@@ -27,11 +27,11 @@ bignum_subtract_smallest_found:
     movq (%rdx, %r10, WORD_SIZE), %r9
     # arg2 = arg2 - arg1
     sbbq %r9, %r8
-    # *big_value_2 = arg2 
+    # *big_value_2 = arg2
     movq %r8, (%rdi,%r10,WORD_SIZE)
     # increment index
     incq %r10
-    # decrement  
+    # decrement
     decq %rax
     jnz bignum_subtract_L1
 

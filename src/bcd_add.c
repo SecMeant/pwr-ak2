@@ -1,7 +1,7 @@
 #include "bcd_common.h"
 
 void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2){
-  
+
   uint8_t carry = 0;
   // find smallest value
   if(b1.bignum_size < b2.bignum_size){

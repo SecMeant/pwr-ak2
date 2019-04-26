@@ -6,7 +6,7 @@ CHUNK_SIZE = 8
 .global bignum_increment
 bignum_increment:
   addq $1, (%rdi)
-   
+
   movq $1, %r8
 
   bignum_increment_propagate_carry:

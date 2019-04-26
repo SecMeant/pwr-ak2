@@ -1,6 +1,6 @@
 CHUNK_SIZE = 8
 
-.global bignum_add 
+.global bignum_add
 .global add_bignum_fast
 
 .section .text
@@ -39,7 +39,7 @@ bignum_add:
     incq %r9
     decq %r8
     jnz add_bignum_propagate_add
-  
+
   add_bignum_end:
     ret
 

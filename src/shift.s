@@ -17,7 +17,7 @@ bignum_shift_left_64:
   # bits shifted out of previous chunk
   xor %r9, %r9
   # temp register for shifting out bits
-  xor %r8, %r8 
+  xor %r8, %r8
   # shift amount must be in cl register
   mov %rdx, %rcx
   # bignum index
@@ -26,7 +26,7 @@ bignum_shift_left_64:
   bignum_shift_left_shift_loop:
     # fetch bignum chunk
     mov (%rdi, %rdx, CHUNK_SIZE), %r10
-  
+
     # shift out bits to temp register
     shld %cl, %r10, %r8
 
@@ -53,7 +53,7 @@ bignum_shift_left_64:
     decq %rsi
     jnz bignum_shift_left_shift_loop
 
-  ret 
+  ret
 
 /*
   void bignum_shift_left(struct bignum a, int64_t sw);
@@ -70,7 +70,7 @@ bignum_shift_left_64:
 bignum_shift_right_64:
   # shift amount must be in cl register
   mov %rdx, %rcx
-  
+
   # shift first chunk, its special case
   # because first chunk will not shift out
   # any bits
@@ -89,23 +89,23 @@ bignum_shift_right_64:
 
   # load current chunk
   mov (%rdi, %r9, CHUNK_SIZE), %r10
-  
+
   # buffer for storing shifted out bits
   # need to be cleared each time
   xor %r11, %r11
 
   # shift out bits
   shrd %cl, %r10, %r11
-  
+
   # proper shift right of current chunk
   shr %cl, %r10
-  
+
   # save shifted result
   mov %r10, (%rdi, %r9, CHUNK_SIZE)
-  
+
   # or shifted out bits into previous chunk
   or %r11, -CHUNK_SIZE(%rdi, %r9, CHUNK_SIZE)
-  
+
   incq %r9
   jmp bignum_shift_right_shiftloop
 
