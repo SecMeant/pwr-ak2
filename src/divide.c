@@ -17,7 +17,7 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
   const int64_t arg_width =
     bignum_bit_size_to_chunks(shift+1) + b2.bignum_size;
   int64_t divisor_buffer[BIGNUM_MAX_STACK_ALLOC_SIZE];
-  bignum result = bignum_make(bignum_bit_size_to_chunks(shift));
+  bignum result = bignum_make(bignum_bit_size_to_chunks(shift+1));
   bignum divident = bignum_extend(b1, 0);
 
   bignum divisor;
