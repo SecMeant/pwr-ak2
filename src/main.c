@@ -352,6 +352,22 @@ void bcd_isPrime(){
     printf("Number is not prime\n");
 }
 
+void precise_mul_test(){
+  FILE *fptr = fopen("bignum_test", "rb");
+  if(fptr == NULL){
+    printf("Cant open file\n");
+    return;
+  }
+  bignum a =bignum_load(fptr);
+  bignum b =bignum_load(fptr);
+  bignum_print(a);
+  bignum_print(b);
+
+  bignum res = bignum_multiply(a,b);
+  
+  bignum_print(res);
+}
+
 int main()
 {
   return 0;
