@@ -52,7 +52,6 @@ void bignum_hex_atoi
         return;
 
       --buf_reverse;
-      bignum_print_chunks(b);
     }
   }
 }
@@ -77,7 +76,6 @@ static bool bignum_verify_ascii(const char *buffer, size_t size)
   --size;
   while(size != 0)
   {
-    printf("%c", buffer[size]);
     if(!is_hex_digit(buffer[size]))
       return false;
 
