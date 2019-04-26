@@ -7,7 +7,7 @@
 
 // Size of bignum chunk is bytes
 #define CHUNK_SIZE 8
-#define BIGNUM_COMMON_SIZE 2
+#define BIGNUM_COMMON_SIZE 100
 // Size of bognum chunk in bits
 #define CHUNK_SIZE_BITS 64
 
@@ -42,6 +42,7 @@ void bignum_shift_chunk_right(bignum a, int64_t sw);
 bignum bignum_modul(bignum,bignum);
 bignum bignum_multiply(bignum first, bignum second);
 bignum bignum_multiply_fixed(bignum first, bignum second);
+void bignum_multiply_fixed_no_malloc(bignum first, bignum second, bignum result);
 bignum_divide_result bignum_divide(bignum, bignum);
 
 void bignum_print_chunks(bignum b);

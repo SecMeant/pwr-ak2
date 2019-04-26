@@ -6,15 +6,15 @@ CHUNK_SIZE = 8
 .global bignum_increment
 bignum_increment:
   addq $1, (%rdi)
-  # index 
-  movq $0, %r8
+   
+  movq $1, %r8
 
   bignum_increment_propagate_carry:
-    adcq $0, 8(%rdi, %r8, CHUNK_SIZE)
-    add  $1, %rcx
-    decq %rsi
+    cmpq %r8, %rsi
+    jbe bignum_increment_finish
+    adcq $0, (%rdi, %r8, CHUNK_SIZE)
+    incq %r8
     jnc bignum_increment_finish
-    jg bignum_increment_propagate_carry
 
   bignum_increment_finish:
   ret
