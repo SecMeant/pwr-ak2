@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "bignum_common.h"
 #include "bcd_common.h"
+#include "parse.h"
 void shift_test()
 {
   int64_t num1[] = {0,0,3,0};
@@ -327,8 +328,23 @@ void bcd_isPrime(){
     printf("Number is not prime\n");
 }
 
+void precise_mul_test(){
+  FILE *fptr = fopen("bignum_test", "rb");
+  if(fptr == NULL){
+    printf("Cant open file\n");
+    return;
+  }
+  bignum a =bignum_load(fptr);
+  bignum b =bignum_load(fptr);
+  bignum_print(a);
+  bignum_print(b);
+
+  bignum res = bignum_multiply(a,b);
+  
+  bignum_print(res);
+}
+
 int main()
 {
-  power_test();
   return 0;
 }
