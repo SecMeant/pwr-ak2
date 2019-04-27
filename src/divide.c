@@ -11,7 +11,7 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 {
   if(bignum_is_zero(b2))
     bignum_fatal_error("Attempted division by 0.",
-                       ERR_ZERO_DIV);
+                       BIGNUM_ERR_ZERO_DIV);
 
   int64_t shift = bignum_effective_width(b1) - bignum_effective_width(b2);
   const int64_t arg_width =
@@ -29,33 +29,41 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 
   bignum_copy(divisor, b2);
 
-  bignum_shift_left(divisor, shift);
+  bignum_shift_left_inp(divisor, shift);
   while(shift >= 0)
   {
     if(bignum_is_negative(divident))
-      bignum_add(divident, divisor);
+      bignum_add_inp(divident, divisor);
     else
-      bignum_subtract(divident, divisor);
+      bignum_sub_inp(divident, divisor);
 
-    bignum_shift_left(result, 1);
+    bignum_shift_left_inp(result, 1);
     if(!bignum_is_negative(divident))
-      bignum_or_1(result);
+      bignum_or_1_inp(result);
 
     if(bignum_is_zero(divident))
     {
-      bignum_shift_left(result, shift);
+      bignum_shift_left_inp(result, shift);
       break;
     }
 
-    bignum_shift_right(divisor, 1);
+    bignum_shift_right_inp(divisor, 1);
     --shift;
   }
 
   if(bignum_is_negative(divident))
-    bignum_add(divident, b2);
+    bignum_add_inp(divident, b2);
 
   bignum_divide_result ret;
   ret.result = result;
   ret.reminder = divident;
   return ret;
+}
+
+bignum bignum_mod(bignum divident, bignum divisor)
+{
+  bignum_divide_result b = bignum_divide(divident, divisor);
+  bignum_free(b.result);
+
+  return b.reminder;
 }

@@ -1,0 +1,14 @@
+This file contains conventions that developers must stick to.
+Each convention starts with '*'. Convention might have its header,
+if so its contained in '[' and ']'.
+
+* [Symbol name prefixing]
+  All symbol names must begin with 'bignum_' or 'bcd_' wheter it is binary bignum or bcd bignum respectively.
+
+* [Symbol name suffixing]
+  All symbol names that returns result of its operation in one of the arguments must be suffixed with '_inp' for 'in place'.
+  All symbol names that returns result of its operation in additional argument that they take must be suffixed with '_inaa' for  'in additional argument'.
+  All symbol names that returns result as return value or doesnt return any value should not be suffixed.
+
+* [Error constants naming]
+  All constants that represents error message or code must be prefixed with 'ERR_'.

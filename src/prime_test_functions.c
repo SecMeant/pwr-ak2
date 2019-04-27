@@ -14,7 +14,7 @@ bool trial_test(bignum num){
    i_2.bignum = i_2_array;
    while( true ){
 
-     bignum_multiply_fixed_no_malloc(i,i, i_2);
+     bignum_multiply_inaa(i,i, i_2);
 
      res = bignum_divide(num,i);
 
@@ -31,7 +31,7 @@ bool trial_test(bignum num){
        return true;
      }
 
-     bignum_increment(i);
+     bignum_increment_inp(i);
    }
 }
 
@@ -45,7 +45,7 @@ bool fermat_primality_test(bignum num, size_t probes){
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
 
-  bignum_subtract(lhs,rhs);
+  bignum_sub_inp(lhs,rhs);
 
   for(int64_t i =0 ; i < lhs.bignum_size; i++)
     if(lhs.bignum[i] != 0)
@@ -56,7 +56,7 @@ bool bignums_are_equal(bignum lhs, bignum rhs){
 
 bool bignum_less_than(bignum lhs, bignum rhs){
 
-  bignum_subtract(lhs,rhs);
+  bignum_sub_inp(lhs,rhs);
   // bignum_print(lhs);
   for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
     if(lhs.bignum[i] < 0)
@@ -76,7 +76,7 @@ bool bignum_greater_than(bignum lhs, bignum rhs){
   //   else if (sub_result < 0)
   //     return false;
   // }
-  bignum_subtract(lhs,rhs);
+  bignum_sub_inp(lhs,rhs);
 
 
   return !bignum_is_negative(lhs);

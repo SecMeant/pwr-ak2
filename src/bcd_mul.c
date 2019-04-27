@@ -108,7 +108,7 @@ bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2){
 }
 
 
-void bcd_bignum_mul_fixed_no_return(bcd_bignum b1, bcd_bignum b2, bcd_bignum result){
+void bcd_bignum_mul_inaa(bcd_bignum b1, bcd_bignum b2, bcd_bignum result){
 
   // this variables hold result of spliting the multiplication process
   int8_t reminder, quotient;

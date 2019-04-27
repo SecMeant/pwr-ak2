@@ -9,7 +9,7 @@ void shift_test()
   int64_t num1[] = {0,0,3,0};
   bignum bignum_sh = {.bignum = num1, .bignum_size = 4};
   bignum_print(bignum_sh);
-  bignum_shift_right_64(bignum_sh, 1);
+  bignum_shift_right_inp_64_inp(bignum_sh, 1);
   bignum_print(bignum_sh);
 }
 
@@ -21,7 +21,7 @@ void add_test()
   bignum b2 = {.bignum = num2, .bignum_size = 2};
   printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
   printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
-  bignum_add(b1, b2);
+  bignum_add_inp(b1, b2);
   printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
   printf("0x%016lx 0x%016lx\n", *(num2+1), *num2);
 }
@@ -34,7 +34,7 @@ void sub_test()
   bignum b2 = {.bignum = num2, .bignum_size = 2};
   printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
   printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
-  bignum_subtract(b1, b2);
+  bignum_sub_inp(b1, b2);
   printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
   printf("0x%016lx 0x%016lx\n", *(num2+1), *num2);
   printf("Result negative: %li\n", (int64_t)bignum_is_negative(b1));
@@ -81,7 +81,7 @@ void multiply_test(){
   res.bignum[1] = 0x0;
   res.bignum[2] = 0x0;
   res.bignum[3] = 0x0;
-  // bignum_multiply_fixed_no_malloc(first,first,res);
+  // bignum_multiply_inaa(first,first,res);
   res = bignum_multiply_fixed(first,first);
   for(int i =0; i < 4; i++)
     printf( "%lx\n", (uint64_t)res.bignum[i] );
@@ -109,7 +109,7 @@ void power_test(){
 
 }
 
-void bignum_increment_test(){
+void bignum_increment_inp_test(){
   bignum first;
   first.bignum_size = 3;
   first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
@@ -119,7 +119,7 @@ void bignum_increment_test(){
   uint64_t k =0;
   for (uint64_t i = 0; i < 0xfffffffffffffffe; ++i)
   {
-    bignum_increment(first);
+    bignum_increment_inp(first);
     if(i == 0xffffffff*k){
       bignum_print(first);
       k++;
@@ -127,7 +127,7 @@ void bignum_increment_test(){
   }
   for (uint64_t i = 0; i < 0xfffffffffffffffe; ++i)
   {
-    bignum_increment(first);
+    bignum_increment_inp(first);
     bignum_print(first);
   }
   free(first.bignum);
@@ -200,7 +200,7 @@ void bcd_add_test()
     printf("%x",b1.bignum[i] );
   }
   puts("");
-  bcd_bignum_add(b1, b2);
+  bcd_bignum_add_inp(b1, b2);
 
   for(int i =0; i < 9; i++){
     printf("%x",b1.bignum[i] );
@@ -222,7 +222,7 @@ void bcd_sub_test()
     printf("%x",b1.bignum[i] );
   }
   puts("");
-  bcd_bignum_sub(b1, b2);
+  bcd_bignum_sub_inp(b1, b2);
 
   for(int i =0; i < 9; i++){
     printf("%x",b1.bignum[i] );

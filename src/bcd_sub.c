@@ -1,11 +1,11 @@
 #include "bcd_common.h"
 
-void bcd_bignum_sub(bcd_bignum b1, bcd_bignum b2){
+void bcd_bignum_sub_inp(bcd_bignum b1, bcd_bignum b2){
 
   uint8_t carry = 0;
   // find smallest value
   if(b1.bignum_size < b2.bignum_size){
-    bcd_bignum_realloc(&b1, b2.bignum_size);
+    bcd_bignum_realloc_inp(&b1, b2.bignum_size);
   }
   // subtract bignums
   int64_t i;

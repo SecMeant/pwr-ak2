@@ -11,7 +11,7 @@ void bcd_bignum_fatal_error(const char *msg, int64_t errno)
   exit(errno);
 }
 
-void bcd_bignum_shift_left(bcd_bignum b, int64_t sw)
+void bcd_bignum_shift_left_inp(bcd_bignum b, int64_t sw)
 {
   int64_t i = b.bignum_size - sw;
   int64_t j = i + sw;
@@ -31,7 +31,7 @@ void bcd_bignum_shift_left(bcd_bignum b, int64_t sw)
 
 }
 
-void bcd_bignum_shift_right(bcd_bignum b, int64_t sw)
+void bcd_bignum_shift_right_inp(bcd_bignum b, int64_t sw)
 {
   // Shift out.
   int64_t from = sw;
@@ -95,7 +95,7 @@ bool bcd_bignum_is_negative(bcd_bignum b)
   return b.bignum[b.bignum_size-1] > 4;
 }
 
-void bcd_bignum_or_1(bcd_bignum b)
+void bcd_bignum_or_1_inp(bcd_bignum b)
 {
   assert(b.bignum_size >= 0);
   b.bignum[0] |= 1;
@@ -128,23 +128,23 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
 
   bcd_bignum divisor = bcd_bignum_extend(b2, arg_width);
   bcd_bignum one = bcd_bignum_make(result.bignum_size);
-  // TODO(holz) make bcd_bignum_increment
+  // TODO(holz) make bcd_bignum_increment_inp
   one.bignum[0] = 1;
   bcd_bignum_copy(divisor, b2);
 
-  bcd_bignum_shift_left(divisor, shift);
+  bcd_bignum_shift_left_inp(divisor, shift);
   while(shift >= 0)
   {
-    bcd_bignum_shift_left(result, 1);
-    bcd_bignum_sub(divident, divisor);
+    bcd_bignum_shift_left_inp(result, 1);
+    bcd_bignum_sub_inp(divident, divisor);
     while(!bcd_bignum_is_negative(divident))
     {
-      bcd_bignum_add(result, one);
-      bcd_bignum_sub(divident, divisor);
+      bcd_bignum_add_inp(result, one);
+      bcd_bignum_sub_inp(divident, divisor);
     }
-    bcd_bignum_add(divident, divisor);
+    bcd_bignum_add_inp(divident, divisor);
     --shift;
-    bcd_bignum_shift_right(divisor,1);
+    bcd_bignum_shift_right_inp(divisor,1);
   }
 
   bcd_bignum_free(divisor);
@@ -171,7 +171,7 @@ void bcd_bignum_free(bcd_bignum b)
   b.bignum_size = 0;
 }
 
-void bcd_bignum_alloc(bcd_bignum *b1, int64_t size)
+void bcd_bignum_alloc_inp(bcd_bignum *b1, int64_t size)
 {
   b1->bignum = (uint8_t*) malloc(size * BCD_CHUNK_SIZE);
   b1->bignum_size = size;
@@ -186,7 +186,7 @@ bcd_bignum bcd_bignum_make(int64_t size)
   return ret;
 }
 
-void bcd_bignum_realloc(bcd_bignum *b, int64_t newsize)
+void bcd_bignum_realloc_inp(bcd_bignum *b, int64_t newsize)
 {
   b->bignum = (uint8_t*)realloc(b->bignum,
                                newsize * BCD_CHUNK_SIZE);
@@ -199,7 +199,7 @@ void bcd_bignum_realloc(bcd_bignum *b, int64_t newsize)
 
 bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   for(int64_t i =0 ; i < lhs.bignum_size; i++)
     if(lhs.bignum[i] != 0)
@@ -209,14 +209,14 @@ bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
 
 bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   return bcd_bignum_is_negative(lhs);
 }
 
 bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   return !bcd_bignum_is_negative(lhs);
 }
