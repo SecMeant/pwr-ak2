@@ -20,7 +20,7 @@ bool bcd_trial_test(bcd_bignum num){
 
 
 	 while( true ){
-	 	bcd_bignum_mul_fixed_no_return(i,i,i_2);
+	 	bcd_bignum_mul_inaa(i,i,i_2);
 	 	
 	 	res = bcd_bignum_divide(num,i);
 

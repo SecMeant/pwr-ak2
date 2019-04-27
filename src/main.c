@@ -222,7 +222,7 @@ void bcd_sub_test()
     printf("%x",b1.bignum[i] );
   }
   puts("");
-  bcd_bignum_sub(b1, b2);
+  bcd_bignum_sub_inp(b1, b2);
 
   for(int i =0; i < 9; i++){
     printf("%x",b1.bignum[i] );

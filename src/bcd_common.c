@@ -136,11 +136,11 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2)
   while(shift >= 0)
   {
     bcd_bignum_shift_left_inp(result, 1);
-    bcd_bignum_sub(divident, divisor);
+    bcd_bignum_sub_inp(divident, divisor);
     while(!bcd_bignum_is_negative(divident))
     {
       bcd_bignum_add_inp(result, one);
-      bcd_bignum_sub(divident, divisor);
+      bcd_bignum_sub_inp(divident, divisor);
     }
     bcd_bignum_add_inp(divident, divisor);
     --shift;
@@ -199,7 +199,7 @@ void bcd_bignum_realloc_inp(bcd_bignum *b, int64_t newsize)
 
 bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   for(int64_t i =0 ; i < lhs.bignum_size; i++)
     if(lhs.bignum[i] != 0)
@@ -209,14 +209,14 @@ bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs){
 
 bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   return bcd_bignum_is_negative(lhs);
 }
 
 bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs){
 
-  bcd_bignum_sub(lhs,rhs);
+  bcd_bignum_sub_inp(lhs,rhs);
 
   return !bcd_bignum_is_negative(lhs);
 }

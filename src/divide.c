@@ -11,7 +11,7 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 {
   if(bignum_is_zero(b2))
     bignum_fatal_error("Attempted division by 0.",
-                       ERR_ZERO_DIV);
+                       BIGNUM_ERR_ZERO_DIV);
 
   int64_t shift = bignum_effective_width(b1) - bignum_effective_width(b2);
   const int64_t arg_width =

@@ -6,12 +6,12 @@
 #include <unistd.h>
 
 // Size of bignum chunk is bytes
-#define CHUNK_SIZE 8
+#define BIGNUM_CHUNK_SIZE 8
 #define BIGNUM_COMMON_SIZE 100
 // Size of bognum chunk in bits
-#define CHUNK_SIZE_BITS 64
+#define BIGNUM_CHUNK_SIZE_BITS 64
 
-#define ERR_ZERO_DIV -11
+#define BIGNUM_ERR_ZERO_DIV -11
 
 #define BIGNUM_MAX_STACK_ALLOC_SIZE 20
 

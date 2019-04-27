@@ -28,17 +28,14 @@ typedef struct bcd_bignum_divide_result_
   bcd_bignum reminder;
 }bcd_bignum_divide_result;
 
+void bcd_bignum_fatal_error(const char *msg, int64_t errno);
+
 void bcd_bignum_shift_left_inp(bcd_bignum b, int64_t sw);
 void bcd_bignum_shift_right_inp(bcd_bignum b, int64_t sw);
-bool bcd_bignum_is_zero(bcd_bignum b);
-void bcd_bignum_fatal_error(const char *msg, int64_t errno);
 void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
-bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size);
-bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
 void bcd_bignum_or_1_inp(bcd_bignum b);
 bool bcd_trial_test(bcd_bignum b1);
-int64_t bcd_bignum_effective_width(bcd_bignum b);
 
 // sum first bignum with sencod bignum
 // and save result in first bignum
@@ -48,8 +45,8 @@ void bcd_bignum_add_inp(bcd_bignum b1, bcd_bignum b2);
 // from first bignum subtract sencond
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
-// TODO(all) change name to bcd_bignum_sub_inp for compatibility.
-void bcd_bignum_sub(bcd_bignum b1, bcd_bignum b2);
+// TODO(all) change name to bcd_bignum_sub_inp_inp for compatibility.
+void bcd_bignum_sub_inp(bcd_bignum b1, bcd_bignum b2);
 
 // function allocates memory space enought to save whole result
 // which means the result can be as big as sum of length of two bignums size
@@ -61,7 +58,7 @@ bcd_bignum_divide_result bcd_bignum_divide(bcd_bignum b1, bcd_bignum b2);
 // NOTE the result can be cut
 bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2);
 // multiply bignums and save result in given argument
-void bcd_bignum_mul_fixed_no_return(bcd_bignum b1, bcd_bignum b2, bcd_bignum result);
+void bcd_bignum_mul_inaa(bcd_bignum b1, bcd_bignum b2, bcd_bignum result);
 bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent);
 
 void bcd_bignum_add_inp(bcd_bignum b1, bcd_bignum b2);
@@ -76,6 +73,10 @@ void bcd_bignum_alloc_inp(bcd_bignum *b1, int64_t size);
 // if area is expaned set additional part of memory to 0
 void bcd_bignum_realloc_inp(bcd_bignum *b1, int64_t newsize);
 
+bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size);
+bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
+int64_t bcd_bignum_effective_width(bcd_bignum b);
+
 // convert given number from ascii to N10
 // mode describes the endianes of given number
 // save result in dst table, the result is always little endian
@@ -85,3 +86,4 @@ void to_bcd_number(const char* number, ENDIANES mode, uint8_t* dst);
 bool bcd_bignums_are_equal(bcd_bignum lhs, bcd_bignum rhs);
 bool bcd_bignum_less_than(bcd_bignum lhs, bcd_bignum rhs);
 bool bcd_bignum_greater_than(bcd_bignum lhs, bcd_bignum rhs);
+bool bcd_bignum_is_zero(bcd_bignum b);

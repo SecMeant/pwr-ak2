@@ -7,7 +7,7 @@ bignum bignum_multiply(bignum first, bignum second){
 	int64_t first_max_bits = bignum_effective_width(first);
 	int64_t second_max_bits = bignum_effective_width(second);
 	// we need to round up the result
-	int64_t chunks =  (first_max_bits + second_max_bits + 1) / CHUNK_SIZE_BITS + 1;
+	int64_t chunks =  (first_max_bits + second_max_bits + 1) / BIGNUM_CHUNK_SIZE_BITS + 1;
 
 	bignum res = bignum_make(chunks);
 	memset(res.bignum, 0, chunks*sizeof(int64_t));

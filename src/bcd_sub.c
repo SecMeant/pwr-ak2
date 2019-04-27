@@ -1,6 +1,6 @@
 #include "bcd_common.h"
 
-void bcd_bignum_sub(bcd_bignum b1, bcd_bignum b2){
+void bcd_bignum_sub_inp(bcd_bignum b1, bcd_bignum b2){
 
   uint8_t carry = 0;
   // find smallest value
