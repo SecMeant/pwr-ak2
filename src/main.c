@@ -93,19 +93,21 @@ void multiply_test(){
 }
 
 void power_test(){
-  bignum first;
-  first.bignum_size = BIGNUM_COMMON_SIZE;
-  first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
-  memset(first.bignum,0,BIGNUM_COMMON_SIZE*sizeof(int64_t));
-  first.bignum[0] = 0x12;
-  // for(int i =0; i < 100; i++){
-  //   first = bignum_multiply_fixed(first,first);
-  //   bignum_print(first);
-  // }
-  bignum res = bignum_power(first,123);
+  bignum b1 = bignum_load(stdin);
+  bignum res = bignum_power(b1,123);
   bignum_print(res);
-  free(first.bignum);
-  // free(res.bignum);
+  free(res.bignum);
+
+}
+
+void power_test_mod(){
+  bignum b1 = bignum_load(stdin);
+  bignum b2 = bignum_load(stdin);
+
+  bignum res = bignum_power_mod(b1,b2,123);
+  bignum_print(res);
+  free(b2.bignum);
+  free(res.bignum);
 
 }
 
@@ -361,5 +363,6 @@ void precise_mul_test(){
 
 int main()
 {
+  power_test();
   return 0;
 }

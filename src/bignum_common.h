@@ -53,6 +53,7 @@ bool bignum_is_zero(bignum b1);
 void bignum_copy(bignum b1, bignum b2);
 
 bignum bignum_power(bignum num, int exponent);
+bignum bignum_power_mod(bignum num, bignum p, int exponent);
 bignum bignum_extend_twice(bignum b1);
 bignum bignum_extend(bignum b, int64_t size);
 void bignum_or_1_inp(bignum b); // inserts 1 to lsb. (used when dividing)

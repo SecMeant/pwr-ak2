@@ -3,37 +3,65 @@
 #include <string.h>
 bignum bignum_power(bignum num, int exponent){
 
-  int64_t temp[BIGNUM_COMMON_SIZE];
-  memset(temp,0,BIGNUM_COMMON_SIZE*sizeof(int64_t));
-  temp[0] = 0x1;
-  int64_t* tmp_res = NULL, *tmp_num = NULL;
-
+  int64_t *tmp_num;
+  
   // set init value
-  bignum result;
-  result.bignum_size = BIGNUM_COMMON_SIZE;
-  result.bignum = temp;
+  bignum result = bignum_make(BIGNUM_COMMON_SIZE);
+  result.bignum[0] = 0x1;
 
+  while( exponent > 0){
+    if(exponent & 1){
+      tmp_num = result.bignum;
+      result = bignum_multiply(result,num);
+      free(tmp_num);
+    }
+
+    exponent = exponent>>1;
+    tmp_num = num.bignum;
+    num = bignum_multiply(num,num);
+    free(tmp_num);
+    tmp_num = num.bignum;
+  }
+  free(num.bignum);
+  return result;
+
+}
+
+
+bignum bignum_power_mod(bignum num, bignum p, int exponent){
+
+  int64_t *tmp_num = NULL;
+ 
+  bignum result = bignum_make(BIGNUM_COMMON_SIZE);
+  result.bignum[0] = 0x1;
+
+  // update num
+  bignum tmp = bignum_mod(num,p);
+  free(num.bignum);
+  num = tmp;
+  
   while( exponent > 0){
 
     if(exponent & 1){
-      result = bignum_multiply_fixed(result,num);
-      if(tmp_res != NULL)
-        free(tmp_res);
-      tmp_res = result.bignum;
+      tmp_num = result.bignum;
+      result = bignum_multiply(result,num);
+      free(tmp_num);      
+
+      tmp = bignum_mod(result,p);
+      free(result.bignum);
+      result = tmp; 
     }
+
     exponent = exponent>>1;
-
-    num = bignum_multiply_fixed(num,num);
-    if(tmp_num != NULL)
-      free(tmp_num);
     tmp_num = num.bignum;
-
+    num = bignum_multiply(num,num);
+    free(tmp_num);
+    
+    tmp = bignum_mod(num,p);
+    free(num.bignum);
+    num = tmp;
   }
-
+  
   free(num.bignum);
   return result;
 }
-
-// bignum bignum_power_mod(bignum number, int exponent, int mod){
-
-// }

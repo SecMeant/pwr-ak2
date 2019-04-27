@@ -45,7 +45,6 @@ bignum_multiply_precise_outter_loop:
   bignum_multiply_precise_inner_loop:
 
     movq (%r15, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
-    movq (%r10, %r12, CHUNK_SIZE), %rbx   # get chunk from second bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
     # add result  
     addq %rax, (%r8, %r14,CHUNK_SIZE )
