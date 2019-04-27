@@ -33,8 +33,15 @@ bool trial_test(bignum num){
 
      bignum_increment(i);
    }
-
 }
+
+bool fermat_primality_test(bignum num, size_t probes){
+
+  for(size_t i = 0; i< probes; i++){
+    
+  }
+}
+
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
 
