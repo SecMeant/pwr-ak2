@@ -15,6 +15,16 @@
 
 #define BIGNUM_MAX_STACK_ALLOC_SIZE 20
 
+#define bignum_swap(b1, b2) \
+{ \
+  bignum tmp = b1; \
+  b1 = b2; \
+  b2 = tmp; \
+}
+
+typedef int64_t* bignum_underlay_type;
+typedef int64_t  bignum_underlay_size_type;
+
 typedef struct bignum_
 {
   int64_t *bignum;
@@ -44,6 +54,7 @@ bignum bignum_multiply_fixed(bignum first, bignum second);
 void bignum_multiply_inaa(bignum first, bignum second, bignum result);
 bignum_divide_result bignum_divide(bignum, bignum);
 bignum bignum_mod(bignum, bignum);
+bignum bignum_gcd(bignum, bignum);
 
 void bignum_print_chunks(bignum b);
 void bignum_print(bignum b);
