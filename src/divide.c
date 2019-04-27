@@ -73,9 +73,6 @@ bignum bignum_gcd(bignum b1, bignum b2)
   bignum b1_p = bignum_extend(b1, b1.bignum_size);
   bignum b2_p = bignum_extend(b2, b2.bignum_size);
 
-  bignum_print(b1_p);
-  bignum_print(b2_p);
-
   if(bignum_greater_than(b2_p, b1_p))
   {
     bignum_swap(b1_p, b2_p);

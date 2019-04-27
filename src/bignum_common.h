@@ -65,6 +65,7 @@ void bignum_copy(bignum b1, bignum b2);
 
 bignum bignum_power(bignum num, int exponent);
 bignum bignum_power_mod(bignum num, bignum p, int exponent);
+bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent);
 bignum bignum_extend_twice(bignum b1);
 bignum bignum_extend(bignum b, int64_t size);
 void bignum_or_1_inp(bignum b); // inserts 1 to lsb. (used when dividing)
@@ -80,3 +81,4 @@ bool bignums_are_equal(bignum a, bignum b);
 bool bignum_less_than(bignum lhs, bignum rhs);
 bool bignum_greater_than(bignum a, bignum b);
 bool trial_test(bignum a);
+bool fermat_primality_test(bignum p, size_t probes);

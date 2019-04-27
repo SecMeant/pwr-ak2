@@ -110,6 +110,16 @@ void power_test_mod(){
   free(res.bignum);
 
 }
+void power_test_mod_2(){
+  bignum b1 = bignum_load(stdin);
+  bignum b2 = bignum_load(stdin);
+
+  bignum res = bignum_power_mod_2(b1,b2,b1);
+  bignum_print(res);
+  free(b2.bignum);
+  free(res.bignum);
+
+}
 
 void bignum_increment_inp_test(){
   bignum first;
@@ -141,6 +151,20 @@ void isPrime(){
   bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
 
   bool prime = trial_test(b1);
+
+  if( prime )
+    printf("Number is prime\n");
+  else
+    printf("Number is not prime\n");
+
+}
+
+void isPrime_fermat(){
+  int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll };
+
+  bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
+
+  bool prime = fermat_primality_test(b1, 10);
 
   if( prime )
     printf("Number is prime\n");
@@ -363,6 +387,6 @@ void precise_mul_test(){
 
 int main()
 {
-  power_test();
+  isPrime_fermat();
   return 0;
 }
