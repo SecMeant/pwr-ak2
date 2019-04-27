@@ -59,3 +59,11 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
   ret.reminder = divident;
   return ret;
 }
+
+bignum bignum_mod(bignum divident, bignum divisor)
+{
+  bignum_divide_result b = bignum_divide(divident, divisor);
+  bignum_free(b.result);
+
+  return b.reminder;
+}
