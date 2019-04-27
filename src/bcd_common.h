@@ -28,27 +28,27 @@ typedef struct bcd_bignum_divide_result_
   bcd_bignum reminder;
 }bcd_bignum_divide_result;
 
-void bcd_bignum_shift_left(bcd_bignum b, int64_t sw);
-void bcd_bignum_shift_right(bcd_bignum b, int64_t sw);
+void bcd_bignum_shift_left_inp(bcd_bignum b, int64_t sw);
+void bcd_bignum_shift_right_inp(bcd_bignum b, int64_t sw);
 bool bcd_bignum_is_zero(bcd_bignum b);
 void bcd_bignum_fatal_error(const char *msg, int64_t errno);
 void bcd_bignum_copy(bcd_bignum dst, bcd_bignum src);
 bcd_bignum bcd_bignum_extend(bcd_bignum b, int64_t size);
 bcd_bignum bcd_bignum_extend_twice(bcd_bignum b);
 bool bcd_bignum_is_negative(bcd_bignum b);
-void bcd_bignum_or_1(bcd_bignum b);
+void bcd_bignum_or_1_inp(bcd_bignum b);
 bool bcd_trial_test(bcd_bignum b1);
 int64_t bcd_bignum_effective_width(bcd_bignum b);
 
 // sum first bignum with sencod bignum
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
-void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
+void bcd_bignum_add_inp(bcd_bignum b1, bcd_bignum b2);
 
 // from first bignum subtract sencond
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
-// TODO(all) change name to bcd_bignum_subtract for compatibility.
+// TODO(all) change name to bcd_bignum_sub_inp for compatibility.
 void bcd_bignum_sub(bcd_bignum b1, bcd_bignum b2);
 
 // function allocates memory space enought to save whole result
@@ -64,17 +64,17 @@ bcd_bignum bcd_bignum_mul_fixed(bcd_bignum b1, bcd_bignum b2);
 void bcd_bignum_mul_fixed_no_return(bcd_bignum b1, bcd_bignum b2, bcd_bignum result);
 bcd_bignum bcd_bignum_power(bcd_bignum num, int exponent);
 
-void bcd_bignum_add(bcd_bignum b1, bcd_bignum b2);
+void bcd_bignum_add_inp(bcd_bignum b1, bcd_bignum b2);
 void bcd_increment(bcd_bignum b1);
 
 void bcd_bignum_print(bcd_bignum b);
 // bcd memory managment stuff
 void bcd_bignum_free(bcd_bignum b);
 bcd_bignum bcd_bignum_make(int64_t size);
-void bcd_bignum_alloc(bcd_bignum *b1, int64_t size);
+void bcd_bignum_alloc_inp(bcd_bignum *b1, int64_t size);
 // realloc memory with given size
 // if area is expaned set additional part of memory to 0
-void bcd_bignum_realloc(bcd_bignum *b1, int64_t newsize);
+void bcd_bignum_realloc_inp(bcd_bignum *b1, int64_t newsize);
 
 // convert given number from ascii to N10
 // mode describes the endianes of given number

@@ -7,7 +7,7 @@ void bignum_fatal_error(const char *msg, int64_t errno)
   exit(errno);
 }
 
-void bignum_shift_left(bignum a, int64_t sw)
+void bignum_shift_left_inp(bignum a, int64_t sw)
 {
   int64_t chunk_shift = 0;
 
@@ -17,13 +17,13 @@ void bignum_shift_left(bignum a, int64_t sw)
     // TODO This can be twice as fast in assembly
     chunk_shift = sw / 64;
     sw = sw % 64;
-    bignum_shift_chunk_left(a, chunk_shift);
+    bignum_shift_chunk_left_inp(a, chunk_shift);
   }
 
-  bignum_shift_left_64(a, sw);
+  bignum_shift_left_inp_64_inp(a, sw);
 }
 
-void bignum_shift_right(bignum a, int64_t sw)
+void bignum_shift_right_inp(bignum a, int64_t sw)
 {
   int64_t chunk_shift = 0;
 
@@ -33,10 +33,10 @@ void bignum_shift_right(bignum a, int64_t sw)
     // TODO This can be twice as fast in assembly
     chunk_shift = sw / 64;
     sw = sw % 64;
-    bignum_shift_chunk_right(a, chunk_shift);
+    bignum_shift_chunk_right_inp(a, chunk_shift);
   }
 
-  bignum_shift_right_64(a, sw);
+  bignum_shift_right_inp_64_inp(a, sw);
 }
 
 void bignum_print_chunks(bignum b)
@@ -92,7 +92,7 @@ bignum bignum_extend(bignum b, int64_t size)
   return ret;
 }
 
-void bignum_or_1(bignum b1)
+void bignum_or_1_inp(bignum b1)
 {
   if(b1.bignum_size == 0)
     return;
@@ -126,7 +126,7 @@ int64_t bignum_bit_size_to_chunks(int64_t bitsize)
   return ret;
 }
 
-void bignum_shift_chunk_left(bignum a, int64_t sw)
+void bignum_shift_chunk_left_inp(bignum a, int64_t sw)
 {
   int64_t index = a.bignum_size - sw - 1;
   while(index >=0)
@@ -143,7 +143,7 @@ void bignum_shift_chunk_left(bignum a, int64_t sw)
   }
 }
 
-void bignum_shift_chunk_right(bignum a, int64_t sw)
+void bignum_shift_chunk_right_inp(bignum a, int64_t sw)
 {
   int64_t index = sw + 1;
   while(index < a.bignum_size)
@@ -159,7 +159,7 @@ void bignum_free(bignum b)
   b.bignum_size = 0;
 }
 
-void bignum_alloc(bignum *b1, int64_t size)
+void bignum_alloc_inp(bignum *b1, int64_t size)
 {
   b1->bignum = malloc(size * CHUNK_SIZE);
   b1->bignum_size = size;
@@ -176,7 +176,7 @@ bignum bignum_make(int64_t size)
   return ret;
 }
 
-void bignum_realloc(bignum *b, int64_t newsize)
+void bignum_realloc_inp(bignum *b, int64_t newsize)
 {
   b->bignum = (int64_t*)realloc(b->bignum,
                                newsize * CHUNK_SIZE);

@@ -2,7 +2,7 @@ CHUNK_SIZE = 8
 
 .text
 /*
-  void bignum_shift_left(struct bignum a, int64_t sw);
+  void bignum_shift_left_inp(struct bignum a, int64_t sw);
   rdi = int64_t *bignum
   rsi = int64_t bignum_size
   rdx = int64_t sw
@@ -12,8 +12,8 @@ CHUNK_SIZE = 8
            For bigger shifts, chunk shifting for part
            of the job should be used!
 */
-.global bignum_shift_left_64
-bignum_shift_left_64:
+.global bignum_shift_left_inp_64_inp
+bignum_shift_left_inp_64_inp:
   # bits shifted out of previous chunk
   xor %r9, %r9
   # temp register for shifting out bits
@@ -23,7 +23,7 @@ bignum_shift_left_64:
   # bignum index
   xor %rdx, %rdx
 
-  bignum_shift_left_shift_loop:
+  bignum_shift_left_inp_shift_loop:
     # fetch bignum chunk
     mov (%rdi, %rdx, CHUNK_SIZE), %r10
 
@@ -51,12 +51,12 @@ bignum_shift_left_64:
     incq %rdx
     # while(bignum_size > 0)
     decq %rsi
-    jnz bignum_shift_left_shift_loop
+    jnz bignum_shift_left_inp_shift_loop
 
   ret
 
 /*
-  void bignum_shift_left(struct bignum a, int64_t sw);
+  void bignum_shift_left_inp(struct bignum a, int64_t sw);
   rdi = int64_t *bignum
   rsi = int64_t bignum_size
   rdx = int64_t sw
@@ -66,8 +66,8 @@ bignum_shift_left_64:
            For bigger shifts, chunk shifting for part
            of the job should be used!
 */
-.global bignum_shift_right_64
-bignum_shift_right_64:
+.global bignum_shift_right_inp_64_inp
+bignum_shift_right_inp_64_inp:
   # shift amount must be in cl register
   mov %rdx, %rcx
 
@@ -82,10 +82,10 @@ bignum_shift_right_64:
   mov $1, %r9
 
   # TODO this probably can be optimized
-  bignum_shift_right_shiftloop:
+  bignum_shift_right_inp_shiftloop:
   # while(bignum_size >= index)
   cmp %r9, %rsi
-  jle bignum_shift_right_return
+  jle bignum_shift_right_inp_return
 
   # load current chunk
   mov (%rdi, %r9, CHUNK_SIZE), %r10
@@ -107,8 +107,8 @@ bignum_shift_right_64:
   or %r11, -CHUNK_SIZE(%rdi, %r9, CHUNK_SIZE)
 
   incq %r9
-  jmp bignum_shift_right_shiftloop
+  jmp bignum_shift_right_inp_shiftloop
 
-  bignum_shift_right_return:
+  bignum_shift_right_inp_return:
     ret
 

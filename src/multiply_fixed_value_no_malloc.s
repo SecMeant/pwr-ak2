@@ -2,7 +2,7 @@
 CHUNK_SIZE = 8
 
 .text
-.global bignum_multiply_fixed_no_malloc
+.global bignum_multiply_inaa
 
 # first bignum argument multiply with second bignum argument
 # return pointer to allocated memory
@@ -12,7 +12,7 @@ CHUNK_SIZE = 8
 # rcx    contains second bignum size
 # r8     contains pointer to result
 # r9     contains result size
-bignum_multiply_fixed_no_malloc:
+bignum_multiply_inaa:
   # save some registers
   push %r12
   push %r13

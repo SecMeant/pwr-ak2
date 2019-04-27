@@ -1,24 +1,24 @@
 CHUNK_SIZE = 8
 
-.global bignum_add
+.global bignum_add_inp
 .global add_bignum_fast
 
 .section .text
 # void add_bignum(struct bignum b1, struct bignum b2)
-bignum_add:
+bignum_add_inp:
   mov %rsi, %r8
   cmp %rsi, %rcx
   cmovs %rcx, %r8
 
   # index
   xor %r9, %r9 # also clear carry flag
-  add_bignum_addloop:
+  add_bignum_add_inploop:
     movq (%rdx, %r9, CHUNK_SIZE), %r10
     adcq %r10, (%rdi, %r9, CHUNK_SIZE)
 
     incq %r9
     decq %r8
-    jnz add_bignum_addloop
+    jnz add_bignum_add_inploop
 
   # if last loop ended without carry, return
   jnc add_bignum_end
