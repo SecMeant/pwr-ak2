@@ -34,7 +34,7 @@ bignum_multiply_inaa:
   movq $0, %rdi
   
   # expand first loop to init argument
-bignum_multiply_no_malloc_init_result:
+bignum_multiply_inaa_init_result:
   # move first chunk to multiply
   movq (%r15), %rax; 
   mulq (%r10, %r12, CHUNK_SIZE)
@@ -45,13 +45,13 @@ bignum_multiply_no_malloc_init_result:
   # save new carry
   movq %rdx, %rdi
 
-  jnc bignum_multiply_no_malloc_no_carry
+  jnc bignum_multiply_inaa_no_carry
   incq %rdi # carry++
-bignum_multiply_no_malloc_no_carry:
+bignum_multiply_inaa_no_carry:
   
   incq %r12
   cmpq %r12, %rsi
-  jg bignum_multiply_no_malloc_init_result
+  jg bignum_multiply_inaa_init_result
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
@@ -60,7 +60,7 @@ bignum_multiply_no_malloc_no_carry:
 
 
 # multiply rest of the number
-bignum_multiply_no_malloc_outter_loop: 
+bignum_multiply_inaa_outter_loop: 
   # i = 0 
   movq $0, %r12
   # just to place result from current multiplication
@@ -68,28 +68,28 @@ bignum_multiply_no_malloc_outter_loop:
   # tmp = j
   movq %r13, %r14
   cmpq $0, %rsi
-  jbe bignum_multiply_no_malloc_finish
+  jbe bignum_multiply_inaa_finish
 
-  bignum_multiply_no_malloc_inner_loop:
+  bignum_multiply_inaa_inner_loop:
 
     movq (%r15, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
     mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
     # add result  
     addq %rax, (%r8, %r14,CHUNK_SIZE )
-    jnc bignum_multiply_no_malloc_no_carry_2
+    jnc bignum_multiply_inaa_no_carry_2
     incq %rdx # carry++
-  bignum_multiply_no_malloc_no_carry_2:
+  bignum_multiply_inaa_no_carry_2:
     # add carry
     addq %rdi, (%r8, %r14,CHUNK_SIZE ) 
     movq %rdx, %rdi
 
-    jnc bignum_multiply_no_malloc_no_carry_3
+    jnc bignum_multiply_inaa_no_carry_3
     incq %rdi # carry++
-  bignum_multiply_no_malloc_no_carry_3:
+  bignum_multiply_inaa_no_carry_3:
     incq %r14
     incq %r12
     cmpq %r12, %rsi
-    jg bignum_multiply_no_malloc_inner_loop
+    jg bignum_multiply_inaa_inner_loop
   # prepand carry
   addq %rdi, (%r8, %r12,CHUNK_SIZE )
   # reset carry
@@ -97,9 +97,9 @@ bignum_multiply_no_malloc_outter_loop:
 
   incq %r13
   decq %rsi
-  jmp bignum_multiply_no_malloc_outter_loop
+  jmp bignum_multiply_inaa_outter_loop
 
-bignum_multiply_no_malloc_finish:
+bignum_multiply_inaa_finish:
   pop %r15
   pop %r14
   pop %r13

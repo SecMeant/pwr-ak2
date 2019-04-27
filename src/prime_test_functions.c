@@ -20,13 +20,12 @@ bool trial_test(bignum num){
 
      if( bignum_is_zero( res.reminder ) ){
        bignum_free( res.result );
-        bignum_free( res.reminder );
+       bignum_free( res.reminder );
        return false;
      }
 
-    bignum_free( res.result );
-    bignum_free( res.reminder );
-    bignum_print(i_2);
+     bignum_free( res.result );
+     bignum_free( res.reminder );
      if( bignum_greater_than(i_2, num) ){
        return true;
      }
