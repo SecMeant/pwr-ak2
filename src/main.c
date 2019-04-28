@@ -113,12 +113,14 @@ void power_test_mod(){
 void power_test_mod_2(){
   bignum b1 = bignum_load(stdin);
   bignum b2 = bignum_load(stdin);
+  for(int i =0; i < 100; i++){
+    bignum res = bignum_power_mod_2(b1,b2,b1);
+    bignum_print(res);
+    free(res.bignum);
+  }
 
-  bignum res = bignum_power_mod_2(b1,b2,b1);
-  bignum_print(res);
+  free(b1.bignum);
   free(b2.bignum);
-  free(res.bignum);
-
 }
 
 void bignum_increment_inp_test(){
@@ -165,6 +167,7 @@ void isPrime_fermat(){
   bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
 
   bool prime = fermat_primality_test(b1, 10);
+
 
   if( prime )
     printf("Number is prime\n");

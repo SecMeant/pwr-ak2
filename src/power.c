@@ -37,7 +37,6 @@ bignum bignum_power_mod(bignum num, bignum p, int exponent){
 
   // update num
   bignum tmp = bignum_mod(num,p);
-  free(num.bignum);
   num = tmp;
   
   while( exponent > 0){
@@ -45,7 +44,7 @@ bignum bignum_power_mod(bignum num, bignum p, int exponent){
     if(exponent & 1){
       tmp_num = result.bignum;
       result = bignum_multiply(result,num);
-      free(tmp_num);      
+      free(tmp_num);
 
       tmp = bignum_mod(result,p);
       free(result.bignum);
@@ -78,7 +77,6 @@ bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent){
 
   // update num
   bignum tmp = bignum_mod(num,p);
-  free(num.bignum);
   num = tmp;
   
   while( bignum_greater_than(const_0, exponent)){
@@ -86,25 +84,25 @@ bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent){
     if(exponent.bignum[0] & 1){
       tmp_num = result.bignum;
       result = bignum_multiply(result,num);
-      free(tmp_num);      
-
-      tmp = bignum_mod(result,p);
-      free(result.bignum);
-      result = tmp; 
+      free(tmp_num);
+      tmp = result;      
+      result = bignum_mod(result,p);
+      bignum_free(tmp);
     }
 
     bignum_shift_right_inp(exponent,1);
-    tmp_num = num.bignum;
-    num = bignum_multiply(num,num);
-    free(tmp_num);
     
+    tmp = num;
+    num = bignum_multiply(num,num);
+    bignum_free(tmp);
+    
+    tmp = num;
     tmp = bignum_mod(num,p);
-    free(num.bignum);
-    num = tmp;
+    bignum_free(tmp);    
   }
   
-  free(num.bignum);
-  free(const_0.bignum);
+  bignum_free(num);
+  bignum_free(const_0);
   
   return result;
 }

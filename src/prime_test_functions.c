@@ -39,10 +39,11 @@ bool trial_test(bignum num){
 bool fermat_primality_test(bignum p, size_t probes){
   // fermat test requires to make 
   bignum a = bignum_make(1);
+  bignum b;
   bignum const_1 = bignum_make(1);
   bignum p_copy = bignum_make(p.bignum_size);
   bignum res;
-  int64_t *num_tmp;
+
   const_1.bignum[0] = 0x1;
   
   srand(time(0));
@@ -52,20 +53,24 @@ bool fermat_primality_test(bignum p, size_t probes){
 
   for(size_t i = 0; i< probes; i++){
     a.bignum[0] = (int64_t)(rand() + 2) + (int64_t)(rand() + 2);  
-    
-    num_tmp= a.bignum; 
+    b = a;
     a = bignum_gcd(p, a);
-    free(num_tmp);
+    bignum_free(b);
+
     const_1.bignum[0] = 1;
     if( !bignums_are_equal(const_1, a)){
       free(a.bignum);
-      free(const_1.bignum);    
+      free(p_copy.bignum);
+      free(const_1.bignum);
+
       return false;
     }
 
     res = bignum_power_mod_2(a, p, p_copy);
+
     const_1.bignum[0] = 1;
     if( !bignums_are_equal(const_1, res)){
+      free(a.bignum);
       free(p_copy.bignum);
       free(const_1.bignum);
       free(res.bignum);
@@ -73,9 +78,9 @@ bool fermat_primality_test(bignum p, size_t probes){
     }
     free(res.bignum);
   }
-
   free(p_copy.bignum);
   free(const_1.bignum);
+  
   return true;
 }
 
