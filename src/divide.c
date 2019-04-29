@@ -1,6 +1,7 @@
 #include "bignum_common.h"
 #include <string.h>
 
+
 int64_t max(int64_t a, int64_t b)
 {
   if(a > b) return a;
@@ -22,10 +23,13 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 
   bignum divisor;
   divisor.bignum_size = b2.bignum_size + arg_width;
-  if(divisor.bignum_size > BIGNUM_MAX_STACK_ALLOC_SIZE)
+  
+  if(divisor.bignum_size > BIGNUM_MAX_STACK_ALLOC_SIZE){
     divisor = bignum_make(divisor.bignum_size);
-  else
+  }
+  else{
     divisor.bignum = divisor_buffer;
+  }
 
   bignum_copy(divisor, b2);
 
@@ -53,7 +57,10 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 
   if(bignum_is_negative(divident))
     bignum_add_inp(divident, b2);
-
+  
+  if(divisor.bignum != divisor_buffer)
+    bignum_free(divisor);
+  
   bignum_divide_result ret;
   ret.result = result;
   ret.reminder = divident;

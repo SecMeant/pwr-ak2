@@ -162,18 +162,17 @@ void isPrime(){
 }
 
 void isPrime_fermat(){
-  int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll };
+    
+  bignum b1 = bignum_load(stdin);
 
-  bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
+  bool prime = fermat_primality_test(b1, 1);
 
-  bool prime = fermat_primality_test(b1, 10);
-
+  bignum_free(b1);
 
   if( prime )
     printf("Number is prime\n");
   else
     printf("Number is not prime\n");
-
 }
 
 void div_test()
@@ -390,6 +389,5 @@ void precise_mul_test(){
 
 int main()
 {
-  isPrime_fermat();
   return 0;
 }

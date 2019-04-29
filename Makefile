@@ -1,6 +1,6 @@
 CC=gcc
 AS=as
-CFLAGS=-Wall -Wextra -std=c11 -ggdb -g3 -fsanitize=address
+CFLAGS=-Wall -Wextra -std=c11 -O3 -flto -fomit-frame-pointer
 ASFLAGS=
 OUTDIR=.
 SRCDIR=./src

@@ -80,6 +80,7 @@ bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent){
   num = tmp;
   
   while( bignum_greater_than(const_0, exponent)){
+    
 
     if(exponent.bignum[0] & 1){
       tmp_num = result.bignum;

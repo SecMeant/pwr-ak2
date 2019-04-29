@@ -1,5 +1,8 @@
 #include "bignum_common.h"
+#include <string.h>
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 void bignum_fatal_error(const char *msg, int64_t errno)
 {
@@ -74,6 +77,15 @@ bool bignum_is_zero(bignum b1)
   return true;
 }
 
+bignum bignum_extend(bignum b, int64_t size)
+{
+  bignum ret;
+  ret.bignum_size = b.bignum_size + size;
+  ret.bignum = (int64_t*)calloc(BIGNUM_CHUNK_SIZE, ret.bignum_size);
+  bignum_copy(ret, b);
+  return ret;
+}
+
 bignum bignum_extend_twice(bignum b1)
 {
   bignum ret;
@@ -83,13 +95,23 @@ bignum bignum_extend_twice(bignum b1)
   return ret;
 }
 
-bignum bignum_extend(bignum b, int64_t size)
+void bignum_resize_inp(bignum *b, int64_t new_chunk_size)
 {
-  bignum ret;
-  ret.bignum_size = b.bignum_size + size;
-  ret.bignum = (int64_t*)calloc(BIGNUM_CHUNK_SIZE, ret.bignum_size);
-  bignum_copy(ret, b);
-  return ret;
+  assert(new_chunk_size > 0);
+
+  if(new_chunk_size == b->bignum_size)
+  { return; }
+
+  b->bignum = realloc(b->bignum, new_chunk_size * BIGNUM_CHUNK_SIZE);
+  assert(b->bignum);
+
+  if(new_chunk_size > b->bignum_size)
+  {
+    memset(b->bignum+b->bignum_size, 0, 
+           (new_chunk_size - b->bignum_size) * BIGNUM_CHUNK_SIZE);
+  }
+
+  b->bignum_size = new_chunk_size;
 }
 
 void bignum_or_1_inp(bignum b1)
@@ -182,4 +204,15 @@ void bignum_realloc_inp(bignum *b, int64_t newsize)
                                newsize * BIGNUM_CHUNK_SIZE);
   b->bignum_size = newsize;
   assert(b->bignum);
+}
+
+bignum bignum_rand(int64_t bignum_size, bignum modulo){
+  bignum b1 = bignum_make(bignum_size);
+  srand(time(0));
+  while(--bignum_size)
+    b1.bignum[bignum_size] = (int64_t)rand() | (((int64_t)( rand())<<31));
+  
+  bignum res = bignum_mod(b1, modulo);
+  bignum_free(b1);
+  return res;
 }

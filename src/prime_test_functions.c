@@ -1,7 +1,5 @@
 #include "bignum_common.h"
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
+
 bool trial_test(bignum num){
    bignum i;
    bignum_divide_result res;
@@ -38,7 +36,7 @@ bool trial_test(bignum num){
 
 bool fermat_primality_test(bignum p, size_t probes){
   // fermat test requires to make 
-  bignum a = bignum_make(1);
+  bignum a;
   bignum b;
   bignum const_1 = bignum_make(1);
   bignum p_copy = bignum_make(p.bignum_size);
@@ -49,69 +47,116 @@ bool fermat_primality_test(bignum p, size_t probes){
   srand(time(0));
 
   bignum_copy(p_copy, p);
-  bignum_sub_inp(p,const_1);
+  bignum_sub_inp(p_copy, const_1);
 
   for(size_t i = 0; i< probes; i++){
-    a.bignum[0] = (int64_t)(rand() + 2) + (int64_t)(rand() + 2);  
-    b = a;
-    a = bignum_gcd(p, a);
+    do{
+      a = bignum_rand(p.bignum_size, p);
+      a.bignum[0] += 2;
+    }while( bignums_are_equal(a, p) );
+
+    b = bignum_gcd(p, a);
+    
+    if( !bignums_are_equal(const_1, b)){
+      bignum_free(a);
+      bignum_free(p_copy);
+      bignum_free(const_1);
+      bignum_free(b);
+      return false;
+    }
+
     bignum_free(b);
 
-    const_1.bignum[0] = 1;
-    if( !bignums_are_equal(const_1, a)){
-      free(a.bignum);
-      free(p_copy.bignum);
-      free(const_1.bignum);
-
-      return false;
-    }
-
-    res = bignum_power_mod_2(a, p, p_copy);
-
-    const_1.bignum[0] = 1;
+    res = bignum_power_mod_2(a, p, p_copy);  
     if( !bignums_are_equal(const_1, res)){
-      free(a.bignum);
-      free(p_copy.bignum);
-      free(const_1.bignum);
-      free(res.bignum);
+      bignum_free(a);
+      bignum_free(p_copy);
+      bignum_free(const_1);
+      bignum_free(res);
       return false;
     }
-    free(res.bignum);
+    bignum_free(a);
+    bignum_free(res);
   }
-  free(p_copy.bignum);
-  free(const_1.bignum);
+
+  bignum_free(p_copy);
+  bignum_free(const_1);
   
   return true;
 }
-
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
+  int64_t *bigger_bignum, *smaller_bignum;
+  int64_t bigger_bignum_size, smaller_bignum_size;
+  
+  if(lhs.bignum_size > rhs.bignum_size){
+    bigger_bignum = lhs.bignum;
+    bigger_bignum_size = lhs.bignum_size;
+    smaller_bignum = rhs.bignum;
+    smaller_bignum_size = rhs.bignum_size;
+  }else{
+    bigger_bignum = rhs.bignum;
+    bigger_bignum_size = rhs.bignum_size;
+    smaller_bignum = lhs.bignum;
+    smaller_bignum_size = lhs.bignum_size;
+  }
 
-  bignum_sub_inp(lhs,rhs);
+  int64_t i;
+  for( i = bigger_bignum_size - 1; i >= smaller_bignum_size; i--)
+    if(bigger_bignum[i] != 0)
+      return false;
 
-  for(int64_t i =0 ; i < lhs.bignum_size; i++)
-    if(lhs.bignum[i] != 0)
+  for( ; i >=0 ; i--)
+    if( bigger_bignum[i] != smaller_bignum[i] )
       return false;
 
   return true;
 }
 
-bool bignum_less_than(bignum lhs, bignum rhs){
 
-  bignum_sub_inp(lhs,rhs);
+bool bignum_less_than(bignum lhs, bignum rhs)
+{
+  int64_t lhs_eff_width = bignum_effective_width(lhs);
+  int64_t rhs_eff_width = bignum_effective_width(rhs);
 
-  return bignum_is_negative(lhs);
-}
-
-bool bignum_greater_than(bignum lhs, bignum rhs){
-  
-  if(lhs.bignum_size > rhs.bignum_size){
-
+  if(lhs_eff_width != rhs_eff_width)
+  {
+    return lhs_eff_width < rhs_eff_width;
   }
 
-    for(int64_t i =0; i < lhs.bignum_size; i++)
-      if(lhs.bignum[i] != 0)
-        return false;
+  int64_t sub_result;
 
-  return true;
+  for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
+  {
+    sub_result = lhs.bignum[i] - rhs.bignum[i];
+    if( sub_result > 0 )
+      return false;
+    else if (sub_result < 0)
+      return true;
+  }
+
+  return false;
+}
+
+bool bignum_greater_than(bignum lhs, bignum rhs)
+{
+  int64_t lhs_eff_width = bignum_effective_width(lhs);
+  int64_t rhs_eff_width = bignum_effective_width(rhs);
+
+  if(lhs_eff_width != rhs_eff_width)
+  {
+    return lhs_eff_width > rhs_eff_width;
+  }
+
+  int64_t sub_result;
+
+  for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
+  {
+    sub_result = lhs.bignum[i] - rhs.bignum[i];
+    if( sub_result > 0 )
+      return true;
+    else if (sub_result < 0)
+      return false;
+  }
+  return false;
 }
