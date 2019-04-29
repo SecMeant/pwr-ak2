@@ -77,5 +77,5 @@ void bignum_alloc_inp(bignum *b1, int64_t size);
 void bignum_realloc_inp(bignum *b1, int64_t newsize);
 bool bignums_are_equal(bignum a, bignum b);
 bool bignum_less_than(bignum lhs, bignum rhs);
-bool bignum_greater_than(bignum a, bignum b);
+bool bignum_greater_than(bignum lhs, bignum rhs);
 bool trial_test(bignum a);

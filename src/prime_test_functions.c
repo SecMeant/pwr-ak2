@@ -53,30 +53,50 @@ bool bignums_are_equal(bignum lhs, bignum rhs){
   return true;
 }
 
-bool bignum_less_than(bignum lhs, bignum rhs){
+bool bignum_less_than(bignum lhs, bignum rhs)
+{
+  int64_t lhs_eff_width = bignum_effective_width(lhs);
+  int64_t rhs_eff_width = bignum_effective_width(rhs);
 
-  bignum_sub_inp(lhs,rhs);
-  // bignum_print(lhs);
-  for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
-    if(lhs.bignum[i] < 0)
-      return true;
-    else if(lhs.bignum[i] != 0)
-      return false;
+  if(lhs_eff_width != rhs_eff_width)
+  {
+    return lhs_eff_width < rhs_eff_width;
   }
+
+  int64_t sub_result;
+
+  for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
+  {
+    sub_result = lhs.bignum[i] - rhs.bignum[i];
+    if( sub_result > 0 )
+      return false;
+    else if (sub_result < 0)
+      return true;
+  }
+
   return false;
 }
 
-bool bignum_greater_than(bignum lhs, bignum rhs){
-  // int64_t sub_result;
-  // for(int64_t i =lhs.bignum_size-1 ; i > 0; i++){
-  //   sub_result =lhs.bignum[i] - rhs.bignum[i];
-  //   if( sub_result > 0 )
-  //     return true;
-  //   else if (sub_result < 0)
-  //     return false;
-  // }
-  bignum_sub_inp(lhs,rhs);
+bool bignum_greater_than(bignum lhs, bignum rhs)
+{
+  int64_t lhs_eff_width = bignum_effective_width(lhs);
+  int64_t rhs_eff_width = bignum_effective_width(rhs);
 
+  if(lhs_eff_width != rhs_eff_width)
+  {
+    return lhs_eff_width > rhs_eff_width;
+  }
 
-  return !bignum_is_negative(lhs);
+  int64_t sub_result;
+
+  for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
+  {
+    sub_result = lhs.bignum[i] - rhs.bignum[i];
+    if( sub_result > 0 )
+      return true;
+    else if (sub_result < 0)
+      return false;
+  }
+
+  return false;
 }
