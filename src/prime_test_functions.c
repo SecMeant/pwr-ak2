@@ -104,8 +104,14 @@ bool bignum_less_than(bignum lhs, bignum rhs){
 }
 
 bool bignum_greater_than(bignum lhs, bignum rhs){
- 
-  bignum_sub_inp(lhs,rhs);
+  
+  if(lhs.bignum_size > rhs.bignum_size){
 
-  return !bignum_is_negative(lhs);
+  }
+
+    for(int64_t i =0; i < lhs.bignum_size; i++)
+      if(lhs.bignum[i] != 0)
+        return false;
+
+  return true;
 }
