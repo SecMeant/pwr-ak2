@@ -12,7 +12,9 @@ bignum_is_negative:
   sets %al
   ret
 
-# safetly copies second operand to first operand
+# safetly copies second operand to first operand.
+# If second bignum doen not have enough space for value
+# value is truncated.
 bignum_copy:
   movq %rsi, %r8
   cmp %rsi, %rcx
