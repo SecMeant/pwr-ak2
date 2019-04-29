@@ -1,4 +1,5 @@
 #include "bignum_common.h"
+#include <string.h>
 #include <stdio.h>
 
 void bignum_fatal_error(const char *msg, int64_t errno)
@@ -74,6 +75,15 @@ bool bignum_is_zero(bignum b1)
   return true;
 }
 
+bignum bignum_extend(bignum b, int64_t size)
+{
+  bignum ret;
+  ret.bignum_size = b.bignum_size + size;
+  ret.bignum = (int64_t*)calloc(BIGNUM_CHUNK_SIZE, ret.bignum_size);
+  bignum_copy(ret, b);
+  return ret;
+}
+
 bignum bignum_extend_twice(bignum b1)
 {
   bignum ret;
@@ -83,13 +93,23 @@ bignum bignum_extend_twice(bignum b1)
   return ret;
 }
 
-bignum bignum_extend(bignum b, int64_t size)
+void bignum_resize_inp(bignum *b, int64_t new_chunk_size)
 {
-  bignum ret;
-  ret.bignum_size = b.bignum_size + size;
-  ret.bignum = (int64_t*)calloc(BIGNUM_CHUNK_SIZE, ret.bignum_size);
-  bignum_copy(ret, b);
-  return ret;
+  assert(new_chunk_size > 0);
+
+  if(new_chunk_size == b->bignum_size)
+  { return; }
+
+  b->bignum = realloc(b->bignum, new_chunk_size * BIGNUM_CHUNK_SIZE);
+  assert(b->bignum);
+
+  if(new_chunk_size > b->bignum_size)
+  {
+    memset(b->bignum+b->bignum_size, 0, 
+           (new_chunk_size - b->bignum_size) * BIGNUM_CHUNK_SIZE);
+  }
+
+  b->bignum_size = new_chunk_size;
 }
 
 void bignum_or_1_inp(bignum b1)

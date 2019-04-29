@@ -65,18 +65,33 @@ void bignum_copy(bignum b1, bignum b2);
 
 bignum bignum_power(bignum num, int exponent);
 bignum bignum_power_mod(bignum num, bignum p, int exponent);
-bignum bignum_extend_twice(bignum b1);
-bignum bignum_extend(bignum b, int64_t size);
-void bignum_or_1_inp(bignum b); // inserts 1 to lsb. (used when dividing)
 
+// Creates new bignum with size of bignum passed as argument + size in bits.
+// Copies value of bignum given as argument to created one.
+bignum bignum_extend(bignum from, int64_t size);
+
+// Creates new bignum with size twice as big as one given as argument.
+// Copies value of one given as argument.
+bignum bignum_extend_twice(bignum b1);
+
+// Resizees bignum to new size.
+// Too big values are truncated.
+// New chunks are zero initialized.
+void bignum_resize_inp(bignum *b, int64_t new_chunk_size);
+
+// Sets first bit in first chunk of bignum passed as arg.
+void bignum_or_1_inp(bignum b);
+
+// Retuns size in bits without front zeros of given bignum.
 int64_t bignum_effective_width(bignum b);
+
+// Returns size in bignum chunks from size in bits.
 int64_t bignum_bit_size_to_chunks(int64_t bitsize);
 
 void bignum_free(bignum b);
 bignum bignum_make(int64_t size);
 void bignum_alloc_inp(bignum *b1, int64_t size);
-void bignum_realloc_inp(bignum *b1, int64_t newsize);
 bool bignums_are_equal(bignum a, bignum b);
 bool bignum_less_than(bignum lhs, bignum rhs);
-bool bignum_greater_than(bignum a, bignum b);
+bool bignum_greater_than(bignum lhs, bignum rhs);
 bool trial_test(bignum a);
