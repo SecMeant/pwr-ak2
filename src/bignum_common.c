@@ -25,6 +25,12 @@ void bignum_shift_left_inp(bignum a, int64_t sw)
 
   bignum_shift_left_inp_64_inp(a, sw);
 }
+bignum bignum_shift_left(bignum a, int64_t sw){
+  bignum res = bignum_make(a.bignum_size);
+  bignum_copy(res, a);
+  bignum_shift_left_inp(res, sw);
+  return res;
+}
 
 void bignum_shift_right_inp(bignum a, int64_t sw)
 {
@@ -198,6 +204,21 @@ bignum bignum_make(int64_t size)
   return ret;
 }
 
+bignum bignum_make_without_assert(int64_t size)
+{
+  if(size<= 0 ){
+    bignum r;
+    r.bignum_size = 0;
+    return r;
+  }
+
+  bignum ret;
+  ret.bignum = (int64_t*) calloc(BIGNUM_CHUNK_SIZE, size);
+  ret.bignum_size = size;
+  assert(ret.bignum);
+  return ret;
+}
+
 void bignum_realloc_inp(bignum *b, int64_t newsize)
 {
   b->bignum = (int64_t*)realloc(b->bignum,
@@ -215,4 +236,26 @@ bignum bignum_rand(int64_t bignum_size, bignum modulo){
   bignum res = bignum_mod(b1, modulo);
   bignum_free(b1);
   return res;
+}
+
+bignum bignum_subchunk(bignum b1, int64_t beg, int64_t end ){
+  bignum res;
+
+  return res;
+}
+int64_t adjustBignums(bignum b1, bignum b2){
+  bignum tmp; 
+  if(b1.bignum_size > b2.bignum_size){
+    tmp = b2;
+    b2 = bignum_extend(b2,b1.bignum_size);
+    bignum_free(tmp);
+    return b1.bignum_size;
+  }
+  
+  tmp = b1;
+  b1 = bignum_extend(b1,b2.bignum_size);
+  bignum_free(tmp);
+  return b2.bignum_size;
+  
+
 }
