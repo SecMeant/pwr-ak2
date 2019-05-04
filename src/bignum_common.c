@@ -231,31 +231,32 @@ bignum bignum_rand(int64_t bignum_size, bignum modulo){
   bignum b1 = bignum_make(bignum_size);
   srand(time(0));
   while(--bignum_size)
-    b1.bignum[bignum_size] = (int64_t)rand() | (((int64_t)( rand())<<31));
+    b1.bignum[bignum_size] = rand();
   
   bignum res = bignum_mod(b1, modulo);
   bignum_free(b1);
   return res;
 }
 
-bignum bignum_subchunk(bignum b1, int64_t beg, int64_t end ){
+bignum bignum_subchunk(bignum b1, int64_t beg, int64_t len ){
   bignum res;
-
+  res = bignum_make(len);
+  memcpy(res.bignum, b1.bignum + beg, sizeof(int64_t)*res.bignum_size); 
   return res;
 }
-int64_t adjustBignums(bignum b1, bignum b2){
+
+int64_t adjustBignums(bignum *b1, bignum *b2){
   bignum tmp; 
-  if(b1.bignum_size > b2.bignum_size){
-    tmp = b2;
-    b2 = bignum_extend(b2,b1.bignum_size);
-    bignum_free(tmp);
-    return b1.bignum_size;
+  
+  if(b1->bignum_size > b2->bignum_size){
+    tmp = *b2;
+    *b2 = bignum_extend(*b2, b1->bignum_size - b2->bignum_size);
+    // bignum_free(tmp);
+    return b2->bignum_size;
   }
   
-  tmp = b1;
-  b1 = bignum_extend(b1,b2.bignum_size);
-  bignum_free(tmp);
-  return b2.bignum_size;
-  
-
+  tmp = *b1;
+  *b1 = bignum_extend(*b1, b2->bignum_size - b1->bignum_size);
+  // bignum_free(tmp);
+  return b1->bignum_size;
 }

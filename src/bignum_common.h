@@ -40,8 +40,10 @@ typedef struct bignum_divide_result_
 void bignum_fatal_error(const char *msg, int64_t errno);
 bignum bignum_add(bignum, bignum);
 void bignum_add_inp(bignum, bignum);
+
 bignum bignum_subtract(bignum, bignum);
 void bignum_sub_inp(bignum, bignum);
+
 void bignum_increment_inp(bignum a);
 void bignum_shift_left_inp_64_inp(bignum a, int64_t sw);
 void bignum_shift_right_inp_64_inp(bignum a, int64_t sw);
@@ -54,6 +56,8 @@ void bignum_shift_chunk_right_inp(bignum a, int64_t sw);
 bignum bignum_multiply(bignum first, bignum second);
 bignum bignum_multiply_fixed(bignum first, bignum second);
 void bignum_multiply_inaa(bignum first, bignum second, bignum result);
+bignum karatsuba_mul_s(bignum b1, bignum b2);
+
 bignum_divide_result bignum_divide(bignum, bignum);
 bignum bignum_mod(bignum, bignum);
 bignum bignum_gcd(bignum, bignum);
@@ -103,4 +107,5 @@ bool trial_test(bignum a);
 bool fermat_primality_test(bignum p, size_t probes);
 
 bignum bignum_subchunk(bignum b1, int64_t beg, int64_t end );
-int64_t adjustBignums(bignum b1, bignum b2);
+int64_t adjustBignums(bignum *b1, bignum *b2);
+

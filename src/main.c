@@ -32,12 +32,8 @@ void sub_test()
   int64_t num2[2] = {0x5454545454545454 ,0x3434343434343433};
   bignum b1 = {.bignum = num1, .bignum_size = 2};
   bignum b2 = {.bignum = num2, .bignum_size = 2};
-  printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
-  printf("0x%016lx 0x%016lx\n\n", *(num2+1), *num2);
   bignum_sub_inp(b1, b2);
-  printf("0x%016lx 0x%016lx\n", *(num1+1), *num1);
-  printf("0x%016lx 0x%016lx\n", *(num2+1), *num2);
-  printf("Result negative: %li\n", (int64_t)bignum_is_negative(b1));
+  bignum_print(b1);
 }
 
 void copy_test()
@@ -85,6 +81,31 @@ void multiply_test(){
   res = bignum_multiply_fixed(first,first);
   for(int i =0; i < 4; i++)
     printf( "%lx\n", (uint64_t)res.bignum[i] );
+
+  free (first.bignum);
+  free (second.bignum);
+  free (res.bignum);
+
+}
+void karatsuba_multiply_test(){
+
+  bignum first, second;
+  first.bignum_size = 4;
+  first.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
+  first.bignum[0] = 0xfffffffffffffffe;
+  first.bignum[1] = 0x0;
+  first.bignum[2] = 0x0;
+  first.bignum[3] = 0x0;
+
+  second.bignum_size = 4;
+  second.bignum = (int64_t*)malloc(sizeof(uint64_t)*first.bignum_size);
+  second.bignum[0] = 0x5454545454545454;
+  second.bignum[1] = 0x0;
+  second.bignum[2] = 0x0;
+  second.bignum[3] = 0x0;
+
+  bignum res = karatsuba_mul_s(first,second);
+  bignum_print(res);
 
   free (first.bignum);
   free (second.bignum);
@@ -146,6 +167,8 @@ void bignum_increment_inp_test(){
   }
   free(first.bignum);
 }
+
+
 
 void isPrime(){
   int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll };
@@ -389,5 +412,7 @@ void precise_mul_test(){
 
 int main()
 {
+
+  karatsuba_multiply_test();
   return 0;
 }
