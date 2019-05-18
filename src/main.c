@@ -148,9 +148,7 @@ void bignum_increment_inp_test(){
 }
 
 void isPrime(){
-  int64_t num1[BIGNUM_COMMON_SIZE] = { 2305843009213693951ll };
-
-  bignum b1 = {.bignum = num1, .bignum_size = BIGNUM_COMMON_SIZE};
+  bignum b1 = bignum_load(stdin);
 
   bool prime = trial_test(b1);
 
@@ -159,6 +157,7 @@ void isPrime(){
   else
     printf("Number is not prime\n");
 
+  bignum_free(b1);
 }
 
 void isPrime_fermat(){
@@ -188,8 +187,10 @@ void div_test()
   bignum b1 = bignum_load(f);
   bignum b2 = bignum_load(f);
   bignum_divide_result res = bignum_schoolbook_divide(b1,b2);
+  puts("============****========");
   bignum_print(res.result);
   bignum_print(res.reminder);
+  puts("============****========");
   bignum_free(res.reminder);
   bignum_free(res.result);
   bignum_free(b1);
@@ -417,5 +418,4 @@ int fuzz_test(int argc, char **argv)
 
 int main()
 {
-  div_test();
 }

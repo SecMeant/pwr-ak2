@@ -1,5 +1,3 @@
-.extern malloc
-
 CHUNK_SIZE = 8
 
 .text
@@ -24,9 +22,7 @@ bignum_multiply_precise:
 
   movq %rdi, %r15
   movq %rdx, %r10
-  # int i = 0
-  movq $0, %r12
-  # int j = 1
+  # int j = 0
   movq $0, %r13
   # carry = 0
   movq $0, %rdi
