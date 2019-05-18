@@ -20,6 +20,29 @@ bignum bignum_multiply(bignum first, bignum second){
 	return res;
 }
 
+bignum bignum_multiply_fixed(bignum first, bignum second){
+
+	int64_t chunks = first.bignum_size > second.bignum_size ? first.bignum_size : second.bignum_size; 
+	
+	bignum res = bignum_make(chunks);
+	// just to siplify algorith, assume that first bignum is allway bigger than second
+	if( first.bignum_size > second.bignum_size )
+		bignum_multiply_precise(first, second, res);
+	else
+		bignum_multiply_precise(second, first, res);
+
+	return res;
+}
+
+void bignum_multiply_inaa(bignum first, bignum second, bignum res){
+
+	if( first.bignum_size > second.bignum_size )
+		bignum_multiply_precise(first, second, res);
+	else
+		bignum_multiply_precise(second, first, res);
+}
+
+
 bignum bignum_add(bignum first, bignum second){
 	int64_t first_max_bits = bignum_effective_width(first);
 	int64_t second_max_bits = bignum_effective_width(second);
