@@ -187,7 +187,7 @@ void div_test()
 
   bignum b1 = bignum_load(f);
   bignum b2 = bignum_load(f);
-  bignum_divide_result res = bignum_divide(b1,b2);
+  bignum_divide_result res = bignum_schoolbook_divide(b1,b2);
   bignum_print(res.result);
   bignum_print(res.reminder);
   bignum_free(res.reminder);
@@ -387,7 +387,35 @@ void precise_mul_test(){
   bignum_print(res);
 }
 
+int fuzz_test(int argc, char **argv)
+{
+  if(argc < 2)
+  {
+    puts("Give me file");
+    return -1;
+  }
+
+  FILE* f = fopen(argv[1], "rb");
+
+  if(!f)
+  {
+    puts("Cant open file.");
+    return -2;
+  }
+
+  bignum b1 = bignum_load(f);
+  bignum b2 = bignum_load(f);
+
+  bignum_add_inp(b1, b2);
+  bignum_print(b1);
+  bignum_free(b1);
+  bignum_free(b2);
+
+  fclose(f);
+  return 0;
+}
+
 int main()
 {
-  return 0;
+  div_test();
 }

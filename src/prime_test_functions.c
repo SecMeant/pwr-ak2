@@ -1,4 +1,5 @@
 #include "bignum_common.h"
+#include <time.h>
 
 bool trial_test(bignum num){
    bignum i;

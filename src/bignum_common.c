@@ -17,13 +17,24 @@ void bignum_shift_left_inp(bignum a, int64_t sw)
   if(sw >= 64)
   {
     // Why C doesnt know how to divide with modulo ;/
-    // TODO This can be twice as fast in assembly
+    // TODO(all) This can be twice as fast in assembly
     chunk_shift = sw / 64;
     sw = sw % 64;
     bignum_shift_chunk_left_inp(a, chunk_shift);
   }
 
   bignum_shift_left_inp_64_inp(a, sw);
+}
+
+void bignum_shift_left_inp_safe(bignum *a, int64_t sw)
+{
+  int64_t space_left = 
+    a->bignum_size * BIGNUM_CHUNK_SIZE_BITS - bignum_effective_width(*a);
+
+  if(sw > space_left)
+    bignum_resize_inp(a, bignum_bit_size_to_chunks(sw-space_left));
+
+  bignum_shift_left_inp(*a, sw);
 }
 
 void bignum_shift_right_inp(bignum a, int64_t sw)
@@ -33,13 +44,19 @@ void bignum_shift_right_inp(bignum a, int64_t sw)
   if(sw >= 64)
   {
     // Why C doesnt know how to divide with modulo ;/
-    // TODO This can be twice as fast in assembly
+    // TODO(all) This can be twice as fast in assembly
     chunk_shift = sw / 64;
     sw = sw % 64;
     bignum_shift_chunk_right_inp(a, chunk_shift);
   }
 
   bignum_shift_right_inp_64_inp(a, sw);
+}
+
+void bignum_shift_right_inp_safe(bignum a, int64_t sw)
+{
+  // Shifting right is fine, dont have to check anything
+  bignum_shift_right_inp(a, sw);
 }
 
 void bignum_print_chunks(bignum b)

@@ -1,4 +1,6 @@
 #pragma once
+#include "bignum_common.h"
+#include "bcd_common.h"
 
 void terminate(const char * error_msg, int error_code);
 int64_t bignum_parse_hex_nibble(char nibble);
