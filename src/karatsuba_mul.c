@@ -66,6 +66,6 @@ bignum karatsuba_mul_s(bignum b1, bignum b2){
 	bignum_print(P3_shifted);
 
 	bignum_add_inp(P3_shifted, P2);
-	printf("%llu\n", n);
+	// printf("%llu\n", n);
 	return P3_shifted;
 }

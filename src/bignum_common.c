@@ -251,12 +251,12 @@ int64_t adjustBignums(bignum *b1, bignum *b2){
   if(b1->bignum_size > b2->bignum_size){
     tmp = *b2;
     *b2 = bignum_extend(*b2, b1->bignum_size - b2->bignum_size);
-    // bignum_free(tmp);
+    bignum_free(tmp);
     return b2->bignum_size;
   }
   
   tmp = *b1;
   *b1 = bignum_extend(*b1, b2->bignum_size - b1->bignum_size);
-  // bignum_free(tmp);
+  bignum_free(tmp);
   return b1->bignum_size;
 }

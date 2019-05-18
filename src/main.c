@@ -393,7 +393,5 @@ void precise_mul_test(){
 
 int main()
 {
-
-  multiply_test();
   return 0;
 }
