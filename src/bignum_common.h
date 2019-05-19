@@ -48,7 +48,7 @@ void bignum_shift_right_inp_64_inp(bignum a, int64_t sw);
 void bignum_shift_left_inp(bignum a, int64_t sw);
 void bignum_shift_left_inp_safe(bignum *a, int64_t sw);
 void bignum_shift_right_inp(bignum a, int64_t sw);
-void bignum_shift_right_inp_safe(bignum a, int64_t sw);
+void bignum_shift_right_inp_safe(bignum *a, int64_t sw);
 void bignum_shift_chunk_left_inp(bignum a, int64_t sw);
 void bignum_shift_chunk_right_inp(bignum a, int64_t sw);
 

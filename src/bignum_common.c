@@ -53,10 +53,10 @@ void bignum_shift_right_inp(bignum a, int64_t sw)
   bignum_shift_right_inp_64_inp(a, sw);
 }
 
-void bignum_shift_right_inp_safe(bignum a, int64_t sw)
+void bignum_shift_right_inp_safe(bignum *a, int64_t sw)
 {
   // Shifting right is fine, dont have to check anything
-  bignum_shift_right_inp(a, sw);
+  bignum_shift_right_inp(*a, sw);
 }
 
 void bignum_print_chunks(bignum b)
@@ -184,11 +184,27 @@ void bignum_shift_chunk_left_inp(bignum a, int64_t sw)
 
 void bignum_shift_chunk_right_inp(bignum a, int64_t sw)
 {
-  int64_t index = sw + 1;
+  // Start from shift, earlier values will be shifted out anyway
+  int64_t index = sw;
+
+  // Proper shifting part
   while(index < a.bignum_size)
   {
     a.bignum[index-sw] = a.bignum[index];
     ++index;
+  }
+
+  // Fall back to last valid index
+  --index;
+
+  // Get index of lastly correctly shifted value
+  sw = index-sw;
+
+  // Shifting in zeros
+  while(index != sw)
+  {
+    a.bignum[index] = 0;
+    --index;
   }
 }
 

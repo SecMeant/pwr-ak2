@@ -117,7 +117,7 @@ static bool bignum_divide_is_normalized(bignum b1)
 }
 
 // Normalizes arguments for division
-static void bignum_divide_normalize_pair_inaa
+static int64_t bignum_divide_normalize_pair_inaa
 (bignum b1, bignum b2, bignum *nb1, bignum *nb2)
 {
   int64_t effw = bignum_effective_width(b2);
@@ -141,6 +141,8 @@ static void bignum_divide_normalize_pair_inaa
 
   *nb2 = rb1;
   *nb1 = rb2;
+
+  return shift;
 }
 
 // CAUTION: word_index must be in range <0, bignum size * 2>
@@ -175,19 +177,20 @@ static int64_t bignum_effective_word_width(bignum b1)
 bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
 {
   bignum divident, divisor;
-  bignum_divide_normalize_pair_inaa(b1, b2, &divident, &divisor);
+  // noramalize returns correction that has to be applied to ending reminder to be correct
+  int64_t correct = bignum_divide_normalize_pair_inaa(b1, b2, &divident, &divisor);
 
-  puts("====");
-  bignum_print(b1);
-  bignum_print(b2);
-  bignum_print(divident);
-  bignum_print(divisor);
-  puts("====");
+  //puts("====");
+  //bignum_print(b1);
+  //bignum_print(b2);
+  //bignum_print(divident);
+  //bignum_print(divisor);
+  //puts("====");
 
   const int64_t A_word_size = bignum_effective_word_width(divident);
   const int64_t B_word_size = bignum_effective_word_width(divisor);
   const int64_t m = A_word_size - B_word_size;
-  printf("m=%li\n", m);
+  //printf("m=%li\n", m);
 
   bignum quotient = bignum_make(divident.bignum_size);
   bignum quotient_tmp = bignum_extend(quotient, 0);
@@ -196,14 +199,17 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
   if(bignum_divide_get_word(divident, A_word_size-1) >=
      bignum_divide_get_word(divisor, B_word_size-1))
   {
-    puts("Yes");
-    bignum_divide_set_word(quotient, B_word_size, 1);
+    bignum_divide_set_word(quotient, m, 1);
+
     //TODO(holz) A = A - BETA**m * B
+    bignum_shift_left_inp_safe(&divisor, 32*m);
+    bignum_sub_inp(divident, divisor);
+    bignum_shift_right_inp(divisor, 32*m);
   }
   else
   {
-    puts("NO");
-    bignum_divide_set_word(quotient, B_word_size, 0);
+    // This is essentially nop, quotient already zero initialized
+    //bignum_divide_set_word(quotient, m, 0);
   }
 
   bignum mul_res = bignum_make(b1.bignum_size+2);
@@ -217,12 +223,14 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
 
   for(int64_t j = m -1; j >= 0; --j)
   {
-    // ****** DEBUG PRINT ******
-    printf("Divident: ");
-    bignum_print(divident);
-    printf("Divisor: ");
-    bignum_print(divisor);
-    // *************************
+    //// ****** DEBUG PRINT ******
+    //printf("Divident: ");
+    //bignum_print(divident);
+    //printf("Divisor: ");
+    //bignum_print(divisor);
+    //printf("Divisor: ");
+    //bignum_print(divisor);
+    //// *************************
 
     // Quitioent calculation / estimation
     uint64_t chunkA = (bignum_divide_get_word(divident, B_word_size+j) << 32) |
@@ -236,10 +244,10 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
 
     uint32_t q = q_exact;
 
-    // ****** DEBUG PRINT ******
-    printf("a=%lx b=%lx\n", chunkA, chunkB);
-    printf("j=%li q=%x\n", j,q);
-    // *************************
+    //// ****** DEBUG PRINT ******
+    //printf("a=%lx b=%lx\n", chunkA, chunkB);
+    //printf("j=%li q=%x\n", j,q);
+    //// *************************
 
     // Inserting partial result into quotient
     bignum_divide_set_word(quotient_tmp, j, q);
@@ -254,18 +262,18 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     // Subtracting part from divident that has just got "divided"
     bignum_sub_inp(divident, mul_res);
 
-    // ****** DEBUG PRINT ******
-    printf("Quotient (partial): ");
-    bignum_print(quotient_tmp);
-    printf("Divident: ");
-    bignum_print(divident);
-    printf("Divisor: ");
-    bignum_print(divisor);
-    printf("Mul result: ");
-    bignum_print(mul_res);
-    printf("Restore: ");
-    bignum_print(restore_shift);
-    // *************************
+    //// ****** DEBUG PRINT ******
+    //printf("Quotient (partial): ");
+    //bignum_print(quotient_tmp);
+    //printf("Divident: ");
+    //bignum_print(divident);
+    //printf("Divisor: ");
+    //bignum_print(divisor);
+    //printf("Mul result: ");
+    //bignum_print(mul_res);
+    //printf("Restore: ");
+    //bignum_print(restore_shift);
+    //// *************************
 
     // Clearing mul_res
     for(int i = 0; i < mul_res.bignum_size; ++i)
@@ -274,28 +282,29 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     // Quotient might be too big, if so, correct
     while(bignum_is_negative(divident))
     {
-      puts("NEG");
+      //puts("NEG");
       --q;
-      printf("Divident after sub: ");
-      bignum_print(divident);
-      printf("Restore value: ");
-      bignum_print(restore_shift);
+      //printf("Divident after sub: ");
+      //bignum_print(divident);
+      //printf("Restore value: ");
+      //bignum_print(restore_shift);
       bignum_add_inp(divident, restore_shift);
     }
-    puts("q ok!");
+    //puts("q ok!");
 
     // Inserting partial result into quotient
     bignum_divide_set_word(quotient, j, q);
     bignum_divide_set_word(quotient_tmp, j, 0);
 
-    printf("partial result=%x\n", q);
+    //printf("partial result=%x\n", q);
   }
   bignum_free(mul_res);
   bignum_free(restore_shift);
   bignum_free(quotient_tmp);
   bignum_free(divisor);
 
-  puts("");
+  // Correcting the result after normalization
+  bignum_shift_right_inp(divident, correct);
 
   bignum_divide_result res = {quotient, divident};
   return res;

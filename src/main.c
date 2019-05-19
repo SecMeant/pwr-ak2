@@ -187,10 +187,8 @@ void div_test()
   bignum b1 = bignum_load(f);
   bignum b2 = bignum_load(f);
   bignum_divide_result res = bignum_schoolbook_divide(b1,b2);
-  puts("============****========");
   bignum_print(res.result);
   bignum_print(res.reminder);
-  puts("============****========");
   bignum_free(res.reminder);
   bignum_free(res.result);
   bignum_free(b1);
