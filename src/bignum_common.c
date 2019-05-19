@@ -32,7 +32,7 @@ void bignum_shift_left_inp_safe(bignum *a, int64_t sw)
     a->bignum_size * BIGNUM_CHUNK_SIZE_BITS - bignum_effective_width(*a);
 
   if(sw > space_left)
-    bignum_resize_inp(a, bignum_bit_size_to_chunks(sw-space_left));
+    bignum_resize_inp(a, a->bignum_size + bignum_bit_size_to_chunks(sw-space_left));
 
   bignum_shift_left_inp(*a, sw);
 }
