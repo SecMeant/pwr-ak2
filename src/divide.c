@@ -174,6 +174,10 @@ static int64_t bignum_effective_word_width(bignum b1)
 // Base used when dividing
 #define DIV_BASE 32
 
+// Assuemes:
+//  divident.size >= 2
+//  divisor.size >= 1
+//  divident > divisor
 bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
 {
   bignum divident, divisor;
