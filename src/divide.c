@@ -207,8 +207,9 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
   }
   else
   {
+    // qm = 0
     // This is essentially nop, quotient already zero initialized
-    //bignum_divide_set_word(quotient, m, 0);
+    // bignum_divide_set_word(quotient, m, 0);
   }
 
   bignum mul_res = bignum_make(b1.bignum_size+2);

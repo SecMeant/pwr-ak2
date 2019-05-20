@@ -10,6 +10,17 @@ void bignum_fatal_error(const char *msg, int64_t errno)
   exit(errno);
 }
 
+void bignum_sub_scaled_total_inp(bignum b1, bignum b2, int64_t bit_sc)
+{
+  // Equivalent to division by 64
+  int64_t chunk_sc = bit_sc >> 6;
+
+  // Equivalent to reminder from division by 64
+  bit_sc &= ((1 << 6)-1);
+
+  bignum_sub_scaled_inp(b1, b2, chunk_sc, bit_sc);
+}
+
 void bignum_shift_left_inp(bignum a, int64_t sw)
 {
   int64_t chunk_shift = 0;

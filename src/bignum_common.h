@@ -41,6 +41,8 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 
 void bignum_add_inp(bignum, bignum);
 void bignum_sub_inp(bignum, bignum);
+// Scales second argument and subtracts from first, without modifying second.
+void bignum_sub_scaled_inp(bignum, bignum, int64_t chunk_sc);
 void bignum_increment_inp(bignum a);
 void bignum_shift_64_inp(bignum a, int64_t sw);
 void bignum_right_64_inp(bignum a, int64_t sw);
