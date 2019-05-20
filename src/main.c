@@ -9,7 +9,7 @@ void shift_test()
   int64_t num1[] = {0,0,3,0};
   bignum bignum_sh = {.bignum = num1, .bignum_size = 4};
   bignum_print(bignum_sh);
-  bignum_shift_right_inp_64_inp(bignum_sh, 1);
+  bignum_right_64_inp(bignum_sh, 1);
   bignum_print(bignum_sh);
 }
 

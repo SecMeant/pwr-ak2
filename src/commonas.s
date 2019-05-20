@@ -33,8 +33,6 @@ bignum_copy:
 
   bignum_copy_zeroextend_loop:
     # if two indexes meet, exit
-    # TODO check if this work if rsi has smaller value
-    # ie first argument is smaller
     cmp %rcx, %rsi
     jz bignum_copy_end
 

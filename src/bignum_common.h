@@ -42,9 +42,8 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 void bignum_add_inp(bignum, bignum);
 void bignum_sub_inp(bignum, bignum);
 void bignum_increment_inp(bignum a);
-// TODO(holz) name bug ?
-void bignum_shift_left_inp_64_inp(bignum a, int64_t sw);
-void bignum_shift_right_inp_64_inp(bignum a, int64_t sw);
+void bignum_shift_64_inp(bignum a, int64_t sw);
+void bignum_right_64_inp(bignum a, int64_t sw);
 void bignum_shift_left_inp(bignum a, int64_t sw);
 void bignum_shift_left_inp_safe(bignum *a, int64_t sw);
 void bignum_shift_right_inp(bignum a, int64_t sw);
@@ -64,7 +63,6 @@ void bignum_print(bignum b);
 
 bool bignum_is_negative(bignum b1);
 bool bignum_is_zero(bignum b1);
-// TODO(holz) append _inp to func name
 void bignum_copy(bignum b1, bignum b2);
 
 bignum bignum_power(bignum num, int exponent);
@@ -88,7 +86,6 @@ void bignum_resize_inp(bignum *b, int64_t new_chunk_size);
 void bignum_or_1_inp(bignum b);
 
 // Retuns size in bits without front zeros of given bignum.
-// TODO(holz) add get most significant and effective chunk
 int64_t bignum_effective_width(bignum b);
 
 // Returns size in bignum chunks from size in bits.

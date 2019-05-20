@@ -121,20 +121,15 @@ static int64_t bignum_divide_normalize_pair_inaa
 (bignum b1, bignum b2, bignum *nb1, bignum *nb2)
 {
   int64_t effw = bignum_effective_width(b2);
+  int64_t shift = 31 - ((effw-1) % 32);
   effw = bignum_bit_size_to_chunks(effw);
 
   bignum rb1 = bignum_make(effw);
   bignum_copy(rb1, b2);
 
-  int64_t shift = 0;
-  // TODO(holz) maybe calculate it and do it in one run
-  while(!bignum_divide_is_normalized(rb1))
-  {
-    // Shift doesnt have to be safe, there is guarantee that shift
-    // wont shift out some bits -- earlier number will be normalized.
-    bignum_shift_left_inp(rb1, 1);
-    ++shift;
-  }
+  bignum_shift_left_inp(rb1, shift);
+
+  assert(bignum_divide_is_normalized(rb1));
 
   bignum rb2 = bignum_extend(b1, 0);
   bignum_shift_left_inp_safe(&rb2, shift);
