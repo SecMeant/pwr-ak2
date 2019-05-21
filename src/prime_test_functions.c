@@ -1,21 +1,17 @@
 #include "bignum_common.h"
 
 bool trial_test(bignum num){
-   bignum i;
    bignum_divide_result res;
 
-   int64_t counter_array[BIGNUM_COMMON_SIZE] = {0x2};
-
-   i.bignum_size = BIGNUM_COMMON_SIZE;
-   i.bignum = counter_array;
+   bignum i = bignum_make(BIGNUM_COMMON_SIZE);
    bignum i_2 = bignum_make(BIGNUM_COMMON_SIZE);
-   int64_t i_2_array[BIGNUM_COMMON_SIZE];
+   i.bignum[0] = 0x2;
 
-   i_2.bignum = i_2_array;
    while( true ){
 
-     bignum_multiply_inaa(i,i, i_2);
+     bignum_multiply_inaa(i, i, i_2);
 
+     // res = bignum_schoolbook_divide(num,i);
      res = bignum_divide(num,i);
 
      if( bignum_is_zero( res.reminder ) ){
@@ -26,6 +22,10 @@ bool trial_test(bignum num){
 
      bignum_free( res.result );
      bignum_free( res.reminder );
+     // bignum_print(i);
+     // bignum_print(i_2);
+     // bignum_print(num);
+
      if( bignum_greater_than(i_2, num) ){
        return true;
      }

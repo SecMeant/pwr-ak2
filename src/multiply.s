@@ -24,12 +24,43 @@ bignum_multiply_precise:
 
   movq %rdi, %r15
   movq %rdx, %r10
-  # int i = 0
+
+  # int i = 0 
   movq $0, %r12
-  # int j = 1
+  # int j = 0
   movq $0, %r13
   # carry = 0
   movq $0, %rdi
+
+  movq $0, %r14
+  
+  bignum_multiply_precise_inner_loop_init:
+
+    movq (%r15, %r13, CHUNK_SIZE), %rax;  # get chunk form first bignum
+    mulq (%r10, %r12, CHUNK_SIZE)        # get chunk from second bignum
+    # add result  
+    movq %rax, (%r8, %r14,CHUNK_SIZE )
+    # add carry
+    addq %rdi, ( %r8, %r14, CHUNK_SIZE ) 
+    movq %rdx, %rdi
+
+    jnc bignum_multiply_precise_no_carry_init
+    incq %rdi # carry++
+  bignum_multiply_precise_no_carry_init:
+    incq %r14
+    incq %r12
+    cmpq %r12, %rcx
+    jg bignum_multiply_precise_inner_loop_init
+  
+  # prepand carry
+  addq %rdi, (%r8, %r14,CHUNK_SIZE )
+
+  # reset carry
+  movq $0, %rdi
+  incq %r13
+  decq %rsi
+
+
 
 # multiply rest of the number
 bignum_multiply_precise_outter_loop: 
