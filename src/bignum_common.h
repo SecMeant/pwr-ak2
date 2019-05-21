@@ -89,6 +89,7 @@ void bignum_or_1_inp(bignum b);
 
 // Retuns size in bits without front zeros of given bignum.
 int64_t bignum_effective_width(bignum b);
+int64_t bignum_effective_chunk_width(bignum b);
 
 // Returns size in bignum chunks from size in bits.
 int64_t bignum_bit_size_to_chunks(int64_t bitsize);

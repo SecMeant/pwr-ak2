@@ -11,8 +11,8 @@
 extern const char * bcd_bignum_example;
 
 typedef enum ENDIANES_{
-  LITTLE_ENDIAN,
-  BIG_ENDIAN
+  BIGNUM_LITTLE_ENDIAN,
+  BIGNUM_BIG_ENDIAN
 }ENDIANES;
 
 // we will use unpacked bcd technique

@@ -102,8 +102,7 @@ bignum bignum_gcd(bignum b1, bignum b2)
 
 // ****** BIGNUM SCHOOLBOOK DIVISION IMPLEMENTATION AND HELPERS *******
 // B/2 = (2**32) / 2
-static const uint32_t BETA_OVER_2 = 1 << 31;
-static const uint64_t WORD_MAX = 0xffffffff;
+static const uint64_t WORD_MAX = 0xffffffffffffffff;
 
 static bool bignum_divide_is_normalized(bignum b1)
 {
@@ -121,7 +120,7 @@ static int64_t bignum_divide_normalize_pair_inaa
 (bignum b1, bignum b2, bignum *nb1, bignum *nb2)
 {
   int64_t effw = bignum_effective_width(b2);
-  int64_t shift = 31 - ((effw-1) % 32);
+  int64_t shift = 63 - ((effw-1) % 64);
   effw = bignum_bit_size_to_chunks(effw);
 
   bignum rb1 = bignum_make(effw);
@@ -143,27 +142,15 @@ static int64_t bignum_divide_normalize_pair_inaa
 // CAUTION: word_index must be in range <0, bignum size * 2>
 static int64_t bignum_divide_get_word(bignum b1, int64_t word_index)
 {
-  assert(b1.bignum_size * 2 > word_index);
-  return ((int32_t*)b1.bignum)[word_index] & 0xffffffff;
+  printf("INDEX: %lu\n", word_index);
+  assert(b1.bignum_size > word_index);
+  return b1.bignum[word_index];
 }
 
 // CAUTION: word_index must be in range <0, bignum size * 2>
 static void bignum_divide_set_word(bignum b1, int64_t word_index, int64_t word)
 {
-  assert(b1.bignum_size * 2 > word_index);
-  ((int32_t*)b1.bignum)[word_index] = word;
-}
-
-static int64_t bignum_effective_word_width(bignum b1)
-{
-  int64_t effw = bignum_effective_width(b1);
-  effw = bignum_bit_size_to_chunks(effw);
-  int64_t mse_chunk = b1.bignum[effw-1];
-
-  if(mse_chunk & 0xffffffff00000000)
-    return effw*2;
-  else
-    return effw*2 - 1;
+  b1.bignum[word_index] = word;
 }
 
 // Base used when dividing
@@ -186,8 +173,8 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
   //bignum_print(divisor);
   //puts("====");
 
-  const int64_t A_word_size = bignum_effective_word_width(divident);
-  const int64_t B_word_size = bignum_effective_word_width(divisor);
+  const int64_t A_word_size = bignum_effective_chunk_width(divident);
+  const int64_t B_word_size = bignum_effective_chunk_width(divisor);
   const int64_t m = A_word_size - B_word_size;
   //printf("m=%li\n", m);
 
@@ -201,9 +188,9 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     bignum_divide_set_word(quotient, m, 1);
 
     //TODO(holz) A = A - BETA**m * B
-    bignum_shift_left_inp_safe(&divisor, 32*m);
+    bignum_shift_left_inp_safe(&divisor, 64*m);
     bignum_sub_inp(divident, divisor);
-    bignum_shift_right_inp(divisor, 32*m);
+    bignum_shift_right_inp(divisor, 64*m);
   }
   else
   {
@@ -219,30 +206,33 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
   // Calculated once, then shifted right each interation of algo
   // to get current "restoring value"
   bignum_copy(restore_shift, divisor);
-  bignum_shift_left_inp(restore_shift, 32*m);
+  bignum_shift_left_inp(restore_shift, 64*m);
 
   for(int64_t j = m -1; j >= 0; --j)
   {
-    //// ****** DEBUG PRINT ******
-    //printf("Divident: ");
-    //bignum_print(divident);
-    //printf("Divisor: ");
-    //bignum_print(divisor);
-    //printf("Divisor: ");
-    //bignum_print(divisor);
-    //// *************************
+    // ****** DEBUG PRINT ******
+    printf("Divident: ");
+    bignum_print(divident);
+    printf("Divisor: ");
+    bignum_print(divisor);
+    printf("Divisor: ");
+    bignum_print(divisor);
+    // *************************
 
     // Quitioent calculation / estimation
-    uint64_t chunkA = (bignum_divide_get_word(divident, B_word_size+j) << 32) |
-                     (bignum_divide_get_word(divident, B_word_size+j-1));
+    uint64_t chunkA_high = bignum_divide_get_word(divident, B_word_size+j);
+    uint64_t chunkA_low = bignum_divide_get_word(divident, B_word_size+j-1);
     uint64_t chunkB = bignum_divide_get_word(divisor, B_word_size-1);
-    uint64_t q_exact = chunkA / chunkB;
+    uint64_t q_estimate_high;
+    uint64_t q_estimate;
+
+    __asm("divq %2\n"
+        : "=d" (q_estimate_high), "=a" (q_estimate)
+        : "g" (chunkB), "d" (chunkA_high), "a" (chunkA_low));
 
     // If quotient too big, saturate
-    if(q_exact > WORD_MAX)
-      q_exact = WORD_MAX;
-
-    uint32_t q = q_exact;
+    if(q_estimate_high)
+      q_estimate = WORD_MAX;
 
     //// ****** DEBUG PRINT ******
     //printf("a=%lx b=%lx\n", chunkA, chunkB);
@@ -250,14 +240,14 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     //// *************************
 
     // Inserting partial result into quotient
-    bignum_divide_set_word(quotient_tmp, j, q);
+    bignum_divide_set_word(quotient_tmp, j, q_estimate);
 
     // Scaled divisor by calculated quotient, needed for subtracting from divident
     bignum_multiply_inaa(quotient_tmp, divisor, mul_res);
 
     // Calculating restoring value for this iteration,
     // used if oversestimated quotient
-    bignum_shift_right_inp(restore_shift, 32);
+    bignum_shift_right_inp(restore_shift, 64);
 
     // Subtracting part from divident that has just got "divided"
     bignum_sub_inp(divident, mul_res);
@@ -283,7 +273,7 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     while(bignum_is_negative(divident))
     {
       //puts("NEG");
-      --q;
+      --q_estimate;
       //printf("Divident after sub: ");
       //bignum_print(divident);
       //printf("Restore value: ");
@@ -293,7 +283,7 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
     //puts("q ok!");
 
     // Inserting partial result into quotient
-    bignum_divide_set_word(quotient, j, q);
+    bignum_divide_set_word(quotient, j, q_estimate);
     bignum_divide_set_word(quotient_tmp, j, 0);
 
     //printf("partial result=%x\n", q);

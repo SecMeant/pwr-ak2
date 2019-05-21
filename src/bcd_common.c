@@ -238,7 +238,7 @@ void bcd_increment(bcd_bignum b1){
 void to_bcd_number(const char* number, ENDIANES mode, uint8_t* dst){
   int64_t i =0;
 
-  if(mode == LITTLE_ENDIAN){
+  if(mode == BIGNUM_LITTLE_ENDIAN){
     // decode value
     while(number[i] != 0){
       dst[i] = number[i] -'0';

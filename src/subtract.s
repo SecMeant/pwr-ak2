@@ -61,6 +61,8 @@ bignum_sub_scaled_inp:
   movq %rcx,%rax # rcx smaller?
   cmpq %rsi, %rcx # check
   cmovg %rsi,%rax # if not smaller = rsi
+  subq %r8, %rax
+  jle bignum_sub_scaled_inp_finish
 
  # from now on use r8 as index to first bignum argument
  # earlier chunks would subtract 0 from itself, cuz second
@@ -77,21 +79,20 @@ bignum_sub_scaled_inp_smallest_found:
     movq (%rdx, %r10, WORD_SIZE), %r9
     # arg1 = arg2 - arg1
     sbbq %r9, (%rdi,%r8,WORD_SIZE)
-    # TODO(all) too many index counters -- optimize?
-    # increment index
+
     incq %r10
     incq %r8
-    decq %rsi
-    # decrement
+
     decq %rax
-    jnz bignum_sub_scaled_inp_L1
+    jg bignum_sub_scaled_inp_L1
 
   bignum_sub_scaled_inp_propagate:
-    decq %rsi 
-    js bignum_sub_scaled_finish
-    sbbq $0, (%rdi,%r10,WORD_SIZE)
-    incq %r10
-  jc bignum_sub_scaled_inp_propagate 
+    decq %rsi
+    js bignum_sub_scaled_inp_finish
 
-bignum_sub_scaled_finish:
+    sbbq $0, (%rdi,%r8,WORD_SIZE)
+    incq %r10
+    jc bignum_sub_scaled_inp_propagate 
+
+bignum_sub_scaled_inp_finish:
   ret

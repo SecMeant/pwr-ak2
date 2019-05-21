@@ -416,4 +416,5 @@ int fuzz_test(int argc, char **argv)
 
 int main()
 {
+  div_test();
 }
