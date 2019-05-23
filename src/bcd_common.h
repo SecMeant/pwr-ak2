@@ -45,7 +45,6 @@ void bcd_bignum_add_inp(bcd_bignum b1, bcd_bignum b2);
 // from first bignum subtract sencond
 // and save result in first bignum
 // if neccessary function realloc first bignum to proper size
-// TODO(all) change name to bcd_bignum_sub_inp_inp for compatibility.
 void bcd_bignum_sub_inp(bcd_bignum b1, bcd_bignum b2);
 
 // function allocates memory space enought to save whole result

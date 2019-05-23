@@ -42,10 +42,12 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 void bignum_add_inp(bignum, bignum);
 void bignum_sub_inp(bignum, bignum);
 void bignum_increment_inp(bignum a);
-void bignum_shift_left_inp_64_inp(bignum a, int64_t sw);
-void bignum_shift_right_inp_64_inp(bignum a, int64_t sw);
+void bignum_shift_64_inp(bignum a, int64_t sw);
+void bignum_right_64_inp(bignum a, int64_t sw);
 void bignum_shift_left_inp(bignum a, int64_t sw);
+void bignum_shift_left_inp_safe(bignum *a, int64_t sw);
 void bignum_shift_right_inp(bignum a, int64_t sw);
+void bignum_shift_right_inp_safe(bignum *a, int64_t sw);
 void bignum_shift_chunk_left_inp(bignum a, int64_t sw);
 void bignum_shift_chunk_right_inp(bignum a, int64_t sw);
 
@@ -53,9 +55,9 @@ bignum bignum_multiply(bignum first, bignum second);
 bignum bignum_multiply_fixed(bignum first, bignum second);
 void bignum_multiply_inaa(bignum first, bignum second, bignum result);
 bignum_divide_result bignum_divide(bignum, bignum);
+bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2);
 bignum bignum_mod(bignum, bignum);
 bignum bignum_gcd(bignum, bignum);
-
 void bignum_print_chunks(bignum b);
 void bignum_print(bignum b);
 
@@ -66,7 +68,6 @@ void bignum_copy(bignum b1, bignum b2);
 bignum bignum_power(bignum num, int exponent);
 bignum bignum_power_mod(bignum num, bignum p, int exponent);
 bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent);
-
 
 // Creates new bignum with size of bignum passed as argument + size in bits.
 // Copies value of bignum given as argument to created one.
@@ -97,5 +98,7 @@ void bignum_alloc_inp(bignum *b1, int64_t size);
 bool bignums_are_equal(bignum a, bignum b);
 bool bignum_less_than(bignum lhs, bignum rhs);
 bool bignum_greater_than(bignum lhs, bignum rhs);
+
+
 bool trial_test(bignum a);
 bool fermat_primality_test(bignum p, size_t probes);

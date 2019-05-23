@@ -12,8 +12,8 @@ CHUNK_SIZE = 8
            For bigger shifts, chunk shifting for part
            of the job should be used!
 */
-.global bignum_shift_left_inp_64_inp
-bignum_shift_left_inp_64_inp:
+.global bignum_shift_64_inp
+bignum_shift_64_inp:
   # bits shifted out of previous chunk
   xor %r9, %r9
   # temp register for shifting out bits
@@ -56,7 +56,7 @@ bignum_shift_left_inp_64_inp:
   ret
 
 /*
-  void bignum_shift_left_inp(struct bignum a, int64_t sw);
+  void bignum_shift_right_inp(struct bignum a, int64_t sw);
   rdi = int64_t *bignum
   rsi = int64_t bignum_size
   rdx = int64_t sw
@@ -66,8 +66,8 @@ bignum_shift_left_inp_64_inp:
            For bigger shifts, chunk shifting for part
            of the job should be used!
 */
-.global bignum_shift_right_inp_64_inp
-bignum_shift_right_inp_64_inp:
+.global bignum_right_64_inp
+bignum_right_64_inp:
   # shift amount must be in cl register
   mov %rdx, %rcx
 
@@ -83,31 +83,31 @@ bignum_shift_right_inp_64_inp:
 
   # TODO this probably can be optimized
   bignum_shift_right_inp_shiftloop:
-  # while(bignum_size >= index)
-  cmp %r9, %rsi
-  jle bignum_shift_right_inp_return
+    # while(bignum_size >= index)
+    cmp %r9, %rsi
+    jle bignum_shift_right_inp_return
 
-  # load current chunk
-  mov (%rdi, %r9, CHUNK_SIZE), %r10
+    # load current chunk
+    mov (%rdi, %r9, CHUNK_SIZE), %r10
 
-  # buffer for storing shifted out bits
-  # need to be cleared each time
-  xor %r11, %r11
+    # buffer for storing shifted out bits
+    # need to be cleared each time
+    xor %r11, %r11
 
-  # shift out bits
-  shrd %cl, %r10, %r11
+    # shift out bits
+    shrd %cl, %r10, %r11
 
-  # proper shift right of current chunk
-  shr %cl, %r10
+    # proper shift right of current chunk
+    shr %cl, %r10
 
-  # save shifted result
-  mov %r10, (%rdi, %r9, CHUNK_SIZE)
+    # save shifted result
+    mov %r10, (%rdi, %r9, CHUNK_SIZE)
 
-  # or shifted out bits into previous chunk
-  or %r11, -CHUNK_SIZE(%rdi, %r9, CHUNK_SIZE)
+    # or shifted out bits into previous chunk
+    or %r11, -CHUNK_SIZE(%rdi, %r9, CHUNK_SIZE)
 
-  incq %r9
-  jmp bignum_shift_right_inp_shiftloop
+    incq %r9
+    jmp bignum_shift_right_inp_shiftloop
 
   bignum_shift_right_inp_return:
     ret

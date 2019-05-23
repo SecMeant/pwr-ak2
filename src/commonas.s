@@ -13,7 +13,7 @@ bignum_is_negative:
   ret
 
 # safetly copies second operand to first operand.
-# If second bignum doen not have enough space for value
+# If second bignum does not have enough space for value
 # value is truncated.
 bignum_copy:
   movq %rsi, %r8
@@ -33,8 +33,6 @@ bignum_copy:
 
   bignum_copy_zeroextend_loop:
     # if two indexes meet, exit
-    # TODO check if this work if rsi has smaller value
-    # ie first argument is smaller
     cmp %rcx, %rsi
     jz bignum_copy_end
 

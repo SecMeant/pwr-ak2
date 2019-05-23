@@ -1,5 +1,3 @@
-.extern malloc
-
 CHUNK_SIZE = 8
 
 .text
