@@ -12,8 +12,8 @@ bool trial_test(bignum num){
 
      bignum_multiply_inaa(i, i, i_2);
 
-     // res = bignum_schoolbook_divide(num,i);
-     res = bignum_divide(num,i);
+     res = bignum_schoolbook_divide(num,i);
+     //res = bignum_divide(num,i);
 
      if( bignum_is_zero( res.reminder ) ){
        bignum_free( res.result );
