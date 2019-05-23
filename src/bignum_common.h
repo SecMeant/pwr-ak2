@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define LIKELY(x) __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+
 // Size of bignum chunk is bytes
 #define BIGNUM_CHUNK_SIZE 8
 #define BIGNUM_COMMON_SIZE 100

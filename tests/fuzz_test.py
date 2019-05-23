@@ -15,7 +15,7 @@ except:
 # length is tuple of sizes of bignums
 def generate_pair_op(output_file_name : str, op : str, lengths : tuple, base : int = 16):
   global number_generator
-  avail_digits = '0123456789'
+  avail_digits = '123456789'
 
   if base == 16:
     avail_digits += 'abcdef'
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
   test_ok = True
   while(test_ok):
-    first_arg_len = randrange(234, 360)
-    sec_arg_len = randrange(45, 78)
+    first_arg_len = randrange(2, 10)
+    sec_arg_len = randrange(2, 10)
     generate_pair_op(file_name_dat, 'div', (first_arg_len, sec_arg_len))
     test_ok = bignum_test(file_name_dat)

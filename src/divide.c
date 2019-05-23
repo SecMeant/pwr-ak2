@@ -173,7 +173,7 @@ static int64_t bignum_effective_word_width(bignum b1)
 //  divident.size >= 2
 //  divisor.size >= 1
 //  divident > divisor
-bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
+static bignum_divide_result bignum_schoolbook_divide_internal(bignum b1, bignum b2)
 {
   bignum divident, divisor;
   // noramalize returns correction that has to be applied to ending reminder to be correct
@@ -188,6 +188,7 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
 
   const int64_t A_word_size = bignum_effective_word_width(divident);
   const int64_t B_word_size = bignum_effective_word_width(divisor);
+
   const int64_t m = A_word_size - B_word_size;
   //printf("m=%li\n", m);
 
@@ -309,4 +310,33 @@ bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
   return res;
 }
 
+bignum_divide_result bignum_schoolbook_divide(bignum b1, bignum b2)
+{
+  if(UNLIKELY(bignum_greater_than(b2, b1)))
+  {
+    bignum_divide_result res;
+    res.result = bignum_make(1);
+    res.reminder = bignum_extend(b1,0);
+    
+    // bignum_make zero initializes
+    assert(res.result.bignum[0] == 0);
 
+    return res;
+  }
+
+  // At this point b2 is not greater than b1, so if b1.size == 1, so must b2
+  if(UNLIKELY(b1.bignum_size == 1))
+  {
+    bignum_divide_result res;
+    res.result = bignum_make(1);
+    res.reminder = bignum_make(1);
+
+    __asm("divq %2\n"
+          : "=d" (res.reminder.bignum[0]), "=a" (res.result.bignum[0])
+          : "g" (b2.bignum[0]), "d" (0), "a" (b1.bignum[0]));
+
+    return res;
+  }
+
+  return bignum_schoolbook_divide_internal(b1, b2);
+}
