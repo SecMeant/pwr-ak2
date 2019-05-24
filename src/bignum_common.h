@@ -10,7 +10,7 @@
 
 // Size of bignum chunk is bytes
 #define BIGNUM_CHUNK_SIZE 8
-#define BIGNUM_COMMON_SIZE 100
+#define BIGNUM_COMMON_SIZE 10
 // Size of bognum chunk in bits
 #define BIGNUM_CHUNK_SIZE_BITS 64
 
@@ -44,6 +44,8 @@ void bignum_fatal_error(const char *msg, int64_t errno);
 
 void bignum_add_inp(bignum, bignum);
 void bignum_sub_inp(bignum, bignum);
+// Scales second argument and subtracts from first, without modifying second.
+void bignum_sub_scaled_inp(bignum, bignum, int64_t chunk_sc);
 void bignum_increment_inp(bignum a);
 void bignum_shift_64_inp(bignum a, int64_t sw);
 void bignum_right_64_inp(bignum a, int64_t sw);
@@ -67,10 +69,11 @@ void bignum_print(bignum b);
 bool bignum_is_negative(bignum b1);
 bool bignum_is_zero(bignum b1);
 void bignum_copy(bignum b1, bignum b2);
+void bignum_init(void);
 
 bignum bignum_power(bignum num, int exponent);
 bignum bignum_power_mod(bignum num, bignum p, int exponent);
-bignum bignum_power_mod_2(bignum num, bignum p, bignum exponent);
+bignum bignum_power_mod_bexp(bignum num, bignum p, bignum exponent);
 
 // Creates new bignum with size of bignum passed as argument + size in bits.
 // Copies value of bignum given as argument to created one.
