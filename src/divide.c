@@ -71,7 +71,7 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 
 bignum bignum_mod(bignum divident, bignum divisor)
 {
-  bignum_divide_result b = bignum_divide(divident, divisor);
+  bignum_divide_result b = bignum_schoolbook_divide(divident, divisor);
   bignum_free(b.result);
 
   return b.reminder;
@@ -208,8 +208,9 @@ static bignum_divide_result bignum_schoolbook_divide_internal(bignum b1, bignum 
   }
   else
   {
+    // qm = 0
     // This is essentially nop, quotient already zero initialized
-    //bignum_divide_set_word(quotient, m, 0);
+    // bignum_divide_set_word(quotient, m, 0);
   }
 
   bignum mul_res = bignum_make(b1.bignum_size+2);

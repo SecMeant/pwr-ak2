@@ -1,11 +1,11 @@
 #include "bignum_common.h"
 #include <time.h>
-
+#include <math.h>
 bool trial_test(bignum num){
    bignum_divide_result res;
 
-   bignum i = bignum_make(BIGNUM_COMMON_SIZE);
-   bignum i_2 = bignum_make(BIGNUM_COMMON_SIZE);
+   bignum i = bignum_make(sqrt(num.bignum_size)+1);
+   bignum i_2 = bignum_make(sqrt(num.bignum_size)+1);
    i.bignum[0] = 0x2;
 
    while( true ){
@@ -23,9 +23,6 @@ bool trial_test(bignum num){
 
      bignum_free( res.result );
      bignum_free( res.reminder );
-     // bignum_print(i);
-     // bignum_print(i_2);
-     // bignum_print(num);
 
      if( bignum_greater_than(i_2, num) ){
        return true;
@@ -42,10 +39,7 @@ bool fermat_primality_test(bignum p, size_t probes){
   bignum const_1 = bignum_make(1);
   bignum p_copy = bignum_make(p.bignum_size);
   bignum res;
-
   const_1.bignum[0] = 0x1;
-  
-  srand(time(0));
 
   bignum_copy(p_copy, p);
   bignum_sub_inp(p_copy, const_1);
@@ -67,15 +61,16 @@ bool fermat_primality_test(bignum p, size_t probes){
     }
 
     bignum_free(b);
-
-    res = bignum_power_mod_2(a, p, p_copy);  
-    if( !bignums_are_equal(const_1, res)){
+    res = bignum_power_mod_bexp(a, p, p_copy);
+    // bignum_print(res);
+    if(!bignums_are_equal(const_1, res)){
       bignum_free(a);
       bignum_free(p_copy);
       bignum_free(const_1);
       bignum_free(res);
       return false;
     }
+
     bignum_free(a);
     bignum_free(res);
   }
@@ -87,28 +82,22 @@ bool fermat_primality_test(bignum p, size_t probes){
 }
 
 bool bignums_are_equal(bignum lhs, bignum rhs){
-  int64_t *bigger_bignum, *smaller_bignum;
-  int64_t bigger_bignum_size, smaller_bignum_size;
-  
+  bignum longer, shorter;  
   if(lhs.bignum_size > rhs.bignum_size){
-    bigger_bignum = lhs.bignum;
-    bigger_bignum_size = lhs.bignum_size;
-    smaller_bignum = rhs.bignum;
-    smaller_bignum_size = rhs.bignum_size;
+    longer = lhs;
+    shorter = rhs;
   }else{
-    bigger_bignum = rhs.bignum;
-    bigger_bignum_size = rhs.bignum_size;
-    smaller_bignum = lhs.bignum;
-    smaller_bignum_size = lhs.bignum_size;
+    longer = rhs;
+    shorter = lhs;
   }
-
   int64_t i;
-  for( i = bigger_bignum_size - 1; i >= smaller_bignum_size; i--)
-    if(bigger_bignum[i] != 0)
+
+  for( i = longer.bignum_size - 1; i > shorter.bignum_size; i--)
+    if(longer.bignum[i] != 0)
       return false;
 
   for( ; i >=0 ; i--)
-    if( bigger_bignum[i] != smaller_bignum[i] )
+    if( longer.bignum[i] != shorter.bignum[i] )
       return false;
 
   return true;
