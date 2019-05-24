@@ -114,15 +114,15 @@ bool bignum_less_than(bignum lhs, bignum rhs)
     return lhs_eff_width < rhs_eff_width;
   }
 
-  int64_t sub_result;
-
   for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
   {
-    sub_result = lhs.bignum[i] - rhs.bignum[i];
-    if( sub_result > 0 )
-      return false;
-    else if (sub_result < 0)
+    if( lhs.bignum[i] == rhs.bignum[i] )
+      continue;
+
+    if( (uint64_t) lhs.bignum[i] < (uint64_t) rhs.bignum[i] )
       return true;
+
+    return false;
   }
 
   return false;
@@ -138,15 +138,15 @@ bool bignum_greater_than(bignum lhs, bignum rhs)
     return lhs_eff_width > rhs_eff_width;
   }
 
-  int64_t sub_result;
-
   for(int64_t i = bignum_bit_size_to_chunks(lhs_eff_width)-1 ; i >= 0; i--)
   {
-    sub_result = lhs.bignum[i] - rhs.bignum[i];
-    if( sub_result > 0 )
+    if( lhs.bignum[i] == rhs.bignum[i] )
+      continue;
+
+    if( (uint64_t) lhs.bignum[i] > (uint64_t) rhs.bignum[i] )
       return true;
-    else if (sub_result < 0)
-      return false;
+
+    return false;
   }
   return false;
 }

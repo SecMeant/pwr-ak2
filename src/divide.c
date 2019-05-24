@@ -71,6 +71,8 @@ bignum_divide_result bignum_divide(bignum b1, bignum b2)
 
 bignum bignum_mod(bignum divident, bignum divisor)
 {
+  assert(!bignum_is_zero(divisor));
+
   bignum_divide_result b = bignum_schoolbook_divide(divident, divisor);
   bignum_free(b.result);
 
@@ -79,6 +81,8 @@ bignum bignum_mod(bignum divident, bignum divisor)
 
 bignum bignum_gcd(bignum b1, bignum b2)
 {
+  assert(!bignum_is_zero(b2));
+
   bignum b1_p = bignum_extend(b1, b1.bignum_size);
   bignum b2_p = bignum_extend(b2, b2.bignum_size);
 
