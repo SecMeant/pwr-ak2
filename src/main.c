@@ -94,7 +94,7 @@ void multiply_test(){
 
 void power_test(){
   bignum b1 = bignum_load(stdin);
-  bignum res = bignum_power(b1,123);
+  bignum res = bignum_power(b1,12);
   bignum_print(res);
   free(res.bignum);
 
@@ -114,7 +114,7 @@ void power_test_mod_2(){
   bignum b1 = bignum_load(stdin);
   bignum b2 = bignum_load(stdin);
   for(int i =0; i < 100; i++){
-    bignum res = bignum_power_mod_2(b1,b2,b1);
+    bignum res = bignum_power_mod_bexp(b1,b2,b1);
     bignum_print(res);
     free(res.bignum);
   }
@@ -164,7 +164,7 @@ void isPrime_fermat(){
     
   bignum b1 = bignum_load(stdin);
 
-  bool prime = fermat_primality_test(b1, 1);
+  bool prime = fermat_primality_test(b1, 2);
 
   bignum_free(b1);
 
@@ -172,6 +172,7 @@ void isPrime_fermat(){
     printf("Number is prime\n");
   else
     printf("Number is not prime\n");
+
 }
 
 void div_test()
@@ -416,4 +417,7 @@ int fuzz_test(int argc, char **argv)
 
 int main()
 {
+  bignum_init();
+  // isPrime();
+  isPrime_fermat();
 }

@@ -10,6 +10,7 @@ void bignum_fatal_error(const char *msg, int64_t errno)
   exit(errno);
 }
 
+
 void bignum_shift_left_inp(bignum a, int64_t sw)
 {
   int64_t chunk_shift = 0;
@@ -245,11 +246,14 @@ void bignum_realloc_inp(bignum *b, int64_t newsize)
 
 bignum bignum_rand(int64_t bignum_size, bignum modulo){
   bignum b1 = bignum_make(bignum_size);
-  srand(time(0));
-  while(--bignum_size)
-    b1.bignum[bignum_size] = (int64_t)rand() | (((int64_t)( rand())<<31));
-  
+
+  while(bignum_size--)
+    b1.bignum[bignum_size] = (int64_t)rand() | (( (int64_t)( rand()) << 31) );
   bignum res = bignum_mod(b1, modulo);
   bignum_free(b1);
   return res;
+}
+
+void bignum_init(void){
+  srand(time(0));
 }
