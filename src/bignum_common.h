@@ -108,3 +108,4 @@ bool bignum_greater_than(bignum lhs, bignum rhs);
 
 bool trial_test(bignum a);
 bool fermat_primality_test(bignum p, size_t probes);
+bool rabin_miller_test(bignum p, size_t n);

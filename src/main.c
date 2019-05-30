@@ -175,6 +175,22 @@ void isPrime_fermat(){
 
 }
 
+void isPrime_rm(){
+    
+  bignum b1 = bignum_load(stdin);
+
+  bool prime = rabin_miller_test(b1, 10);
+
+  bignum_free(b1);
+
+  if( prime )
+    printf("Number is prime\n");
+  else
+    printf("Number is not prime\n");
+
+}
+
+
 void div_test()
 {
   FILE *f = fopen("bignums.txt", "rb");
@@ -419,5 +435,5 @@ int main()
 {
   bignum_init();
   // isPrime();
-  isPrime_fermat();
+  isPrime_rm();
 }
