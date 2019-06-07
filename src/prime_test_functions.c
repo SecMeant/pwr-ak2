@@ -115,23 +115,44 @@ bool rabin_miller_test(bignum p, size_t n){
   for(size_t i =0; i < n ; i++){
     a = bignum_rand(p.bignum_size, p_copy);
     a.bignum[0] += 2;
+    
     x = bignum_power_mod_bexp(a, p, d);
     if(bignums_are_equal(const_1, x) || bignums_are_equal(x, p_sub_1))
       continue;
     
-    j =1;
+    j = 1;
     while( j < s && !bignums_are_equal(x, p_sub_1) ){
       x = bignum_power_mod(x,p,2);
-      bignum_print(x);
       if( bignums_are_equal(const_1, x)){
+        bignum_free(const_0);
+        bignum_free(const_1);
+        bignum_free(const_2);
+        bignum_free(const_4);
+        bignum_free(p_copy);
+        bignum_free(d);
+        bignum_free(p_sub_1);
         return false;
       }
       j++;
     }
     if( !bignums_are_equal(x,p_sub_1) ){
+        bignum_free(const_0);
+        bignum_free(const_1);
+        bignum_free(const_2);
+        bignum_free(const_4);
+        bignum_free(p_copy);
+        bignum_free(d);
+        bignum_free(p_sub_1);
       return false;
     }
-  }  
+  }
+  bignum_free(const_0);
+  bignum_free(const_1);
+  bignum_free(const_2);
+  bignum_free(const_4);
+  bignum_free(p_copy);
+  bignum_free(d);
+  bignum_free(p_sub_1);  
   return true;
 }
 
@@ -179,7 +200,7 @@ bool bignum_less_than(bignum lhs, bignum rhs)
 
     return false;
   }
-
+  
   return false;
 }
 

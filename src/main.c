@@ -4,6 +4,8 @@
 #include "bcd_common.h"
 #include "parse.h"
 
+void perform_test(void);
+
 void shift_test()
 {
   int64_t num1[] = {0,0,3,0};
@@ -164,7 +166,7 @@ void isPrime_fermat(){
     
   bignum b1 = bignum_load(stdin);
 
-  bool prime = fermat_primality_test(b1, 2);
+  bool prime = fermat_primality_test(b1, 10);
 
   bignum_free(b1);
 
@@ -371,7 +373,7 @@ void bcd_div_test()
 void bcd_isPrime(){
   uint8_t num1[BCD_COMMON_SIZE];
   memset(num1, 0, BCD_COMMON_SIZE);
-  to_bcd_number(bcd_bignum_example, BIG_ENDIAN, num1);
+  to_bcd_number(bcd_bignum_example, BIGNUM_BIG_ENDIAN, num1);
 
   for(int i = BCD_COMMON_SIZE-1; i >= 0; i--)
     printf( "%x", num1[i]);
@@ -433,7 +435,5 @@ int fuzz_test(int argc, char **argv)
 
 int main()
 {
-  bignum_init();
-  // isPrime();
-  isPrime_rm();
+  perform_test();
 }
