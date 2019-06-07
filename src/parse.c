@@ -93,8 +93,10 @@ static bool bignum_verify_ascii(const char *buffer, size_t size)
   --size;
   while(size != 0)
   {
-    if(!is_hex_digit(buffer[size]))
+    if(!is_hex_digit(buffer[size])){
+      printf("%i\n", (int)buffer[size]);
       return false;
+    }
 
     --size;
   }
@@ -126,6 +128,7 @@ bignum bignum_load(FILE *file)
   if(!bignum_verify_ascii(number_ascii, number_size))
   {
     puts("NOT GOOD NUMBER");
+    printf("%s\n", number_ascii);
     goto bignum_parse_cleanup;
   }
 

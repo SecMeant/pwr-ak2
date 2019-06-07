@@ -94,8 +94,12 @@ void bignum_or_1_inp(bignum b);
 // Retuns size in bits without front zeros of given bignum.
 int64_t bignum_effective_width(bignum b);
 
+// Retuns size in chunks without front zeros of given bignum.
+int64_t bignum_effective_width_chunks(bignum b);
+
 // Returns size in bignum chunks from size in bits.
 int64_t bignum_bit_size_to_chunks(int64_t bitsize);
+
 // Resturn bignum witch bignum_size chunks % modulo; 
 bignum bignum_rand(int64_t bignum_size, bignum modulo);
 void bignum_free(bignum b);

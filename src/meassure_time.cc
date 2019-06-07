@@ -21,16 +21,15 @@ void perform_test(){
   bool is_prime_res[3];
 
   const char *header = "Nazwa;Czy pierwsza;Liczba bitow;Czas";
-  const char *format_str = "%s;%d;%d;%lu%\n";
+  const char *format_str = "%s;%d;%d;%lu\n";
   const char *fun_name_table[] = {"Trial divison", "Fermat primality test", "Miller-Rabin test"};
 
   char buff[1000];
   std::fstream fs ("wyniki_prime", std::fstream::out);
   srand(time(0));
   bignum b1;
-  bignum b_zero = bignum_make(1);
 
-  FILE *in_file = fopen("primes", "r");
+  FILE *in_file = fopen("export", "r");
   if(in_file == NULL)
     return;
   
@@ -41,12 +40,14 @@ void perform_test(){
 
   while(true){
     b1 = bignum_load(in_file);
-
+    
     if(b1.bignum ==  NULL){
       fclose(in_file);
       fs.close();
       return;
     }
+
+    bignum_print(b1);
 
     std::memset(results, 0, sizeof results);
     
@@ -76,4 +77,5 @@ void perform_test(){
       fs << buff;
     }
   }
+
 }

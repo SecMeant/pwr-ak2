@@ -1,0 +1,45 @@
+Nazwa;Czy pierwsza;Liczba bitow;CzasTrial divison;1;14;57425
+Fermat primality test;1;14;122858
+Miller-Rabin test;1;14;22872
+Trial divison;1;14;64967
+Fermat primality test;1;14;129573
+Miller-Rabin test;1;14;22092
+Trial divison;1;14;53894
+Fermat primality test;1;14;117013
+Miller-Rabin test;1;14;21316
+Trial divison;1;14;54139
+Fermat primality test;1;14;117281
+Miller-Rabin test;1;14;22778
+Trial divison;1;14;55195
+Fermat primality test;1;14;119467
+Miller-Rabin test;1;14;22719
+Trial divison;1;14;54248
+Fermat primality test;1;14;118451
+Miller-Rabin test;1;14;22041
+Trial divison;1;14;53767
+Fermat primality test;1;14;119182
+Miller-Rabin test;1;14;22271
+Trial divison;1;19;425458
+Fermat primality test;1;19;161308
+Miller-Rabin test;1;19;29411
+Trial divison;1;24;2038875
+Fermat primality test;1;24;186665
+Miller-Rabin test;1;24;27558
+Trial divison;1;24;2029211
+Fermat primality test;1;24;186193
+Miller-Rabin test;1;24;27751
+Trial divison;1;31;33189615
+Fermat primality test;1;31;244072
+Miller-Rabin test;1;31;39603
+Trial divison;1;34;77128940
+Fermat primality test;1;34;257124
+Miller-Rabin test;1;34;39308
+Trial divison;1;34;77055061
+Fermat primality test;1;34;260061
+Miller-Rabin test;1;34;37284
+Trial divison;1;37;252312738
+Fermat primality test;1;37;281535
+Miller-Rabin test;1;37;42642
+Trial divison;1;37;250369901
+Fermat primality test;1;37;284692
+Miller-Rabin test;1;37;44408

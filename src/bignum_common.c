@@ -162,6 +162,17 @@ int64_t bignum_effective_width(bignum b)
 
   return 0;
 }
+int64_t bignum_effective_width_chunks(bignum b)
+{
+  int64_t chunk;
+  for( chunk = b.bignum_size -1; chunk >= 0 ; --chunk)
+  {
+    if(b.bignum[chunk] != 0)
+      break;
+  }
+
+  return chunk +1;
+}
 
 int64_t bignum_bit_size_to_chunks(int64_t bitsize)
 {

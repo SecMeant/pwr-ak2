@@ -87,7 +87,8 @@ bool rabin_miller_test(bignum p, size_t n){
   bignum d =  bignum_make(p.bignum_size);
   bignum_copy(d, p);
   size_t s = 0;
-  bignum x, a;
+  size_t j;
+  bignum x, a, x_tmp;
 
   bignum const_0 = bignum_make(1);
   bignum const_1 = bignum_make(1);
@@ -101,28 +102,43 @@ bool rabin_miller_test(bignum p, size_t n){
   bignum_sub_inp(d, const_1);
   bignum p_sub_1 = bignum_make(d.bignum_size); 
   bignum_copy(p_sub_1, d);
-  size_t j;
+  
 
   bignum_divide_result tmp = bignum_schoolbook_divide(d, const_2);
+
   while( bignums_are_equal(const_0, tmp.reminder) ){
+    bignum_free(d);
     d = tmp.result;
     s++;
+    bignum_free(tmp.reminder);
     tmp = bignum_schoolbook_divide(d, const_2);
   }
+
+  bignum_free(tmp.reminder);
+  bignum_free(tmp.result);
+
   // just for rand scope
   bignum_sub_inp(p_copy, const_4);
 
   for(size_t i =0; i < n ; i++){
     a = bignum_rand(p.bignum_size, p_copy);
     a.bignum[0] += 2;
-    
+
     x = bignum_power_mod_bexp(a, p, d);
-    if(bignums_are_equal(const_1, x) || bignums_are_equal(x, p_sub_1))
+    x_tmp = x;
+
+    bignum_free(a);
+
+    if(bignums_are_equal(const_1, x) || bignums_are_equal(x, p_sub_1)){
+      bignum_free(x_tmp);
       continue;
+    }
     
     j = 1;
     while( j < s && !bignums_are_equal(x, p_sub_1) ){
       x = bignum_power_mod(x,p,2);
+      bignum_free(x_tmp);
+      x_tmp = x;
       if( bignums_are_equal(const_1, x)){
         bignum_free(const_0);
         bignum_free(const_1);
@@ -131,11 +147,14 @@ bool rabin_miller_test(bignum p, size_t n){
         bignum_free(p_copy);
         bignum_free(d);
         bignum_free(p_sub_1);
+        bignum_free(x_tmp);
         return false;
       }
       j++;
     }
+
     if( !bignums_are_equal(x,p_sub_1) ){
+        bignum_free(x_tmp);
         bignum_free(const_0);
         bignum_free(const_1);
         bignum_free(const_2);
@@ -145,14 +164,17 @@ bool rabin_miller_test(bignum p, size_t n){
         bignum_free(p_sub_1);
       return false;
     }
+    bignum_free(x_tmp);
   }
+  
   bignum_free(const_0);
   bignum_free(const_1);
   bignum_free(const_2);
   bignum_free(const_4);
   bignum_free(p_copy);
   bignum_free(d);
-  bignum_free(p_sub_1);  
+  bignum_free(p_sub_1);
+  
   return true;
 }
 
@@ -168,7 +190,7 @@ bool bignums_are_equal(bignum lhs, bignum rhs){
   }
   int64_t i;
 
-  for( i = longer.bignum_size - 1; i > shorter.bignum_size; i--)
+  for( i = longer.bignum_size - 1; i >= shorter.bignum_size; i--)
     if(longer.bignum[i] != 0)
       return false;
 

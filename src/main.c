@@ -435,5 +435,5 @@ int fuzz_test(int argc, char **argv)
 
 int main()
 {
-  perform_test();
+  isPrime_rm();
 }

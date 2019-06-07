@@ -81,6 +81,7 @@ bignum bignum_power_mod_bexp(bignum num, bignum p, bignum exponent){
     if(exponent.bignum[0] & 1){
       tmp_num = result.bignum;
       result = bignum_multiply(result,num);
+
       free(tmp_num);
       tmp = result;      
       result = bignum_mod(result,p);

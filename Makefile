@@ -1,7 +1,9 @@
 CC=gcc
 CXX=g++
 AS=as
-CFLAGS=-Wall -Wextra -std=c11 -O3 -flto -fomit-frame-pointer
+CFLAGS=-Wall -Wextra -std=c11 -O3 -g3 -fomit-frame-pointer
+CXXFLAGS=-Wall -Wextra -std=c++17 -O3 -g3 -fomit-frame-pointer
+LDFLAGS=-flto -O3
 ASFLAGS=
 OUTDIR=.
 SRCDIR=./src
@@ -33,11 +35,11 @@ ${OBJDIR}/%.o : ${SRCDIR}/%.c
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${OBJDIR}/%.o : ${SRCDIR}/%.cc
-	${CXX} ${CFLAGS} -c $< -o $@
+	${CXX} ${CXXFLAGS} -c $< -o $@
 
 
 ${OUTDIR}/${TARGET} : ${OBJECTS}
-	${CXX} ${CFLAGS} ${OBJECTS} -o ${TARGET}
+	${CXX} ${LDFLAGS} ${OBJECTS} -o ${TARGET}
 
 print-% : ; @echo $* = $($*)
 
